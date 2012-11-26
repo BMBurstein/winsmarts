@@ -22,15 +22,15 @@ namespace {
 			Sleep(100);
 			SuspendThread(tts->contextThread);
 			GetThreadContext(tts->contextThread, &ctxt);
-	#if defined(_X86_)
+#if defined(_X86_)
 			ctxt.Esp -= sizeof(ctxt.Eip);
 			*((DWORD *)ctxt.Esp) = ctxt.Eip;
 			ctxt.Eip = (uintptr_t)(tts->cb);
-	#elif defined(_AMD64_)
+#elif defined(_AMD64_)
 			ctxt.Rsp -= sizeof(ctxt.Rip);
 			*((DWORD64 *)ctxt.Rsp) = ctxt.Rip;
 			ctxt.Rip = (uintptr_t)(tts->cb);
-	#endif
+#endif
 			SetThreadContext(tts->contextThread, &ctxt);
 			ResumeThread(tts->contextThread);
 		}
@@ -51,4 +51,4 @@ void setSigTimer(unsigned int ms, TIMER_CALLBACK cb)
 	HANDLE timerThread = CreateThread(NULL, 0, timerFunc, tts, 0, &tid);
 }
 
-#endif
+#endif // _WIN32
