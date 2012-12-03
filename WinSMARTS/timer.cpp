@@ -8,6 +8,7 @@ namespace {
 	{
 		HANDLE contextThread;
 		TIMER_CALLBACK cb;
+		unsigned int ms;
 	};
 
 	static DWORD WINAPI timerFunc(void * param)
@@ -15,11 +16,11 @@ namespace {
 		timerThreadStuff * tts = (timerThreadStuff*)param;
 		CONTEXT ctxt;
 
-		ctxt.ContextFlags=CONTEXT_ALL;
+		ctxt.ContextFlags = CONTEXT_CONTROL;
 
 		while(1)
 		{
-			Sleep(100);
+			Sleep(tts->ms);
 			SuspendThread(tts->contextThread);
 			GetThreadContext(tts->contextThread, &ctxt);
 #if defined(_X86_)
@@ -48,6 +49,7 @@ void setSigTimer(unsigned int ms, TIMER_CALLBACK cb)
 	timerThreadStuff *tts = new timerThreadStuff;
 	tts->contextThread = myHandle;
 	tts->cb = cb;
+	tts->ms = ms;
 	HANDLE timerThread = CreateThread(NULL, 0, timerFunc, tts, 0, &tid);
 }
 

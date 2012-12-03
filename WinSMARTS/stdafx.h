@@ -23,4 +23,4 @@
 #endif
 
 #include <iostream>
-#include <stdint.h>
+#include <cstdint>
