@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include <string>
+#include <cstddef>
 
 enum taskStatus { READY, NOT_ACTIVE, SUSPENDED, SLEEPING };
 
@@ -12,26 +13,33 @@ class WinSMARTS;
 class Task
 {
 private:
-	taskAsm taskPtr;
-	int priority;
+	TaskAsm taskPtr;
+	unsigned int priority;
 	int origPriority;
 	taskStatus status;
 	std::string name;
-	char stack[8192];
+	char stack[65536];
+	int sleepCounter;
+
+	Task(Task const &);
+	Task& operator=(Task const &);
 
 public:
-	Task(taskProc fn, std::string const &name, int priority, taskProc taskEnd, WinSMARTS*);
-	~Task(void);
+	Task(TaskProc fn, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*);
+	Task(TaskProc fn, void* param, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*);
 
 	void sleepDecr();
 
 	std::string getName() const { return name; }
 	int getPriority() const { return priority; }
-	void incrPriority() { --priority; }
+	void incrPriority() { if(priority) --priority; }
 	void resetPriority() { priority = origPriority; }
 	taskStatus getStatus() const { return status; }
 	void setStatus(taskStatus stat) { status = stat; }
+	void setSleep(int t) { sleepCounter = t; }
 
+	void switchFrom(TaskAsm &tsk) { contextSwitch(&tsk, taskPtr); }
+	void switchTo(TaskAsm tsk) { contextSwitch(&taskPtr, tsk); }
 };
 
 #endif // TASK_H

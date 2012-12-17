@@ -5,7 +5,10 @@
 class schedAlgo
 {
 public:
-	virtual void operator()(WinSMARTS*) = 0;
+	virtual int schedule() const = 0;
+	WinSMARTS* smarts;
+	virtual schedAlgo* clone() const = 0; // http://www.parashift.com/c++-faq-lite/virtual-ctors.html
+	virtual ~schedAlgo() { }
 };
 
 #endif // SCHEDALGO_H

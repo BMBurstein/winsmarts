@@ -2,36 +2,69 @@
 #include "WinSMARTS.h"
 using namespace std;
 
-void *ac,*bc,*mc;
-#define STACK_SIZE 65536
-void a()
+void __stdcall a(WinSMARTS * SMARTS)
 {
-	for(int i=0; i<10; ++i)
+	for(int i=0; i<50; ++i)
 	{
-		cout << 'a' << i << endl;
-		contextSwitch(&ac,bc);
+		cout << 'a';
+		for(long int j=0; j<50000000; ++j)
+			;
 	}
 }
-void b()
+
+void __stdcall b(WinSMARTS * SMARTS)
 {
-	for(int i=0; i<10; ++i)
+	for(int i=0; i<50; ++i)
 	{
-		cout << 'b' << i << endl;
-		contextSwitch(&bc,ac);
+		cout << 'b';
+		for(long int j=0; j<50000000; ++j)
+			;
 	}
 }
-void e()
+
+void __stdcall c(WinSMARTS * SMARTS)
 {
-	cout << "e\n";
-	contextSwitch(&ac,mc);
+	for(int i=0; i<50; ++i)
+	{
+
+		cout << 'c';
+		for(long int j=0; j<50000000; ++j)
+			;
+	}
 }
+
+class RR : public schedAlgo
+{
+public:
+	int schedule() const
+	{
+		int nextTask = smarts->getCurrentTask() + 1;
+		if(nextTask == smarts->getTotalTasks())
+			nextTask = 1;
+		for(int count=1; smarts->getStatus(nextTask) != READY && count<smarts->getTotalTasks(); ++count)
+		{
+			if(++nextTask == smarts->getTotalTasks())
+				nextTask = 1;
+		}
+		if(smarts->getStatus(nextTask) != READY)
+			nextTask = 0;
+		return nextTask;
+	}
+
+	RR* clone() const { return new RR(*this); }
+};
 
 int main()
 {
-	//char s1[STACK_SIZE], s2[STACK_SIZE];
-	//ac=newTask(a,s1+STACK_SIZE,e);
-	//bc=newTask(b,s2+STACK_SIZE,NULL);
-	//contextSwitch(&mc,ac);
-	while(1) ;
+	setvbuf(stdout, NULL, _IONBF, 0);
+
+	RR rr;
+	WinSMARTS SMARTS(rr, 10);
+	
+	SMARTS.declareTask(a, "a", 5);
+	SMARTS.declareTask(b, "b", 5);
+	SMARTS.declareTask(c, "c", 5);
+	SMARTS.runTheTasks();
+
 	return 0;
 }

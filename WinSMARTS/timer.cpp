@@ -9,9 +9,10 @@ namespace {
 		HANDLE contextThread;
 		TIMER_CALLBACK cb;
 		unsigned int ms;
+		void* param;
 	};
 
-	static DWORD WINAPI timerFunc(void * param)
+	DWORD WINAPI timerFunc(void * param)
 	{
 		timerThreadStuff * tts = (timerThreadStuff*)param;
 		CONTEXT ctxt;
@@ -24,10 +25,14 @@ namespace {
 			SuspendThread(tts->contextThread);
 			GetThreadContext(tts->contextThread, &ctxt);
 #if defined(_X86_)
+			ctxt.Esp -= sizeof(tts->param);
+			*((uintptr_t *)ctxt.Esp) = (uintptr_t)tts->param;
 			ctxt.Esp -= sizeof(ctxt.Eip);
 			*((DWORD *)ctxt.Esp) = ctxt.Eip;
 			ctxt.Eip = (uintptr_t)(tts->cb);
 #elif defined(_AMD64_)
+			ctxt.Rsp -= sizeof(tts->param);
+			*((uintptr_t *)ctxt.Rsp) = (uintptr_t)tts->param;
 			ctxt.Rsp -= sizeof(ctxt.Rip);
 			*((DWORD64 *)ctxt.Rsp) = ctxt.Rip;
 			ctxt.Rip = (uintptr_t)(tts->cb);
@@ -41,7 +46,7 @@ namespace {
 	}
 }
 
-void setSigTimer(unsigned int ms, TIMER_CALLBACK cb)
+void setSigTimer(unsigned int ms, TIMER_CALLBACK cb, void* param)
 {
 	DWORD tid;
 	HANDLE myHandle;
@@ -50,6 +55,7 @@ void setSigTimer(unsigned int ms, TIMER_CALLBACK cb)
 	tts->contextThread = myHandle;
 	tts->cb = cb;
 	tts->ms = ms;
+	tts->param = param;
 	HANDLE timerThread = CreateThread(NULL, 0, timerFunc, tts, 0, &tid);
 }
 
