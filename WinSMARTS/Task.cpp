@@ -5,13 +5,7 @@
 Task::Task(TaskProc fn, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS* smarts)
 	: name(name), priority(priority), origPriority(priority), status(READY)
 {
-	taskPtr = newTask(fn, NULL, stack + 65536, taskEnd, smarts);
-}
-
-Task::Task(TaskProc fn, void* param, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS* smarts)
-	: name(name), priority(priority), origPriority(priority), status(READY)
-{
-	taskPtr = newTask(fn, param, stack + 65536, taskEnd, smarts);
+	taskPtr = newTask(fn, smarts, stack + 65536, taskEnd, smarts);
 }
 
 void Task::sleepDecr()

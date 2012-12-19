@@ -23,7 +23,7 @@ private:
 	bool deadlock, contextSwitchFlag, endOfTimeSlice;
 	bool ranAll;
 	TaskAsm myContext;
-	
+
 	void setEndOfTimeSlice() { endOfTimeSlice = true; }
 
 	WinSMARTS(WinSMARTS const&);

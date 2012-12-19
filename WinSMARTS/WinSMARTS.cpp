@@ -38,7 +38,7 @@ WinSMARTS::WinSMARTS(schedAlgo& scheduler, unsigned int interval)
 		ranAll(false),
 		currentTask(0)
 {
-	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, this, "System Idle", MAXINT, ::idleTaskEnd, this)));
+	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", MAXINT, ::idleTaskEnd, this)));
 	algo->smarts = this;
 }
 

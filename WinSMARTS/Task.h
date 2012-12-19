@@ -26,7 +26,6 @@ private:
 
 public:
 	Task(TaskProc fn, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*);
-	Task(TaskProc fn, void* param, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*);
 
 	void sleepDecr();
 
