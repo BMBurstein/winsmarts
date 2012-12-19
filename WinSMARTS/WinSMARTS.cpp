@@ -34,7 +34,6 @@ WinSMARTS::WinSMARTS(schedAlgo& scheduler, unsigned int interval)
 	  algo(scheduler.clone()),
 		contextSwitchFlag(true),
 		endOfTimeSlice(false),
-		sleepingTasks(0),
 		ranAll(false),
 		currentTask(0)
 {
@@ -104,4 +103,12 @@ void WinSMARTS::sleep(unsigned int ms)
 	tasks[getCurrentTask()]->setSleep(ms / timerInterval);
 	tasks[getCurrentTask()]->setStatus(SLEEPING);
 	callScheduler();
+}
+
+bool WinSMARTS::isTaskSleeping()
+{
+	for(TaskIt it = tasks.begin(); it != tasks.end(); ++it)
+		if((*it)->getStatus() == SLEEPING)
+			return true;
+	return false;
 }

@@ -13,12 +13,12 @@
 class WinSMARTS
 {
 private:
-	unsigned int timerInterval; // milliseconds between timer pulses
-	unsigned int currentTask;
-	unsigned int sleepingTasks;
-	std::unique_ptr<schedAlgo> algo;
 	typedef std::vector<std::unique_ptr<Task> > Tasks;
 	typedef Tasks::iterator TaskIt;
+
+	unsigned int timerInterval;                        // milliseconds between timer pulses
+	unsigned int currentTask;                          // index of currently running task
+	std::unique_ptr<schedAlgo> algo;                   // schedular algorithim object 
 	Tasks tasks;
 	bool deadlock, contextSwitchFlag, endOfTimeSlice;
 	bool ranAll;
@@ -37,6 +37,7 @@ public:
 
 	void contextSwitchOn();
 	void sleep(unsigned int ms);
+	bool isTaskSleeping();
 
 	int getCurrentTask() const { return currentTask; }
 	void setCurrentTask(int taskNum) { currentTask = taskNum; }
@@ -56,7 +57,6 @@ public:
 	void incrPriority(int taskNum) { tasks.at(taskNum)->incrPriority(); }
 	void resetPriority(int taskNum) { tasks.at(taskNum)->resetPriority(); }
 	void sleepDecr(int taskNum) { tasks.at(taskNum)->sleepDecr(); }
-	bool isTaskSleeping() { return sleepingTasks > 0; }
 	void callScheduler() { timerHandler(); }
 
 	void taskEnd();
