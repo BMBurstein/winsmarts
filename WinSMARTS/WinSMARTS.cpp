@@ -6,24 +6,29 @@
 using namespace std;
 
 
-namespace {
+namespace
+{
 	void __stdcall taskEnd(WinSMARTS* param)
 	{
+		// run when the task ended
 		param->taskEnd();
 	}
 
 	void __stdcall timerHandler(void* param)
 	{
+		// run every 'timerInterval' milliseconds
 		((WinSMARTS*)param)->timerHandler();
 	}
 
 	void __stdcall systemIdle(WinSMARTS* param)
 	{
+		//Waste of time
 		param->systemIdle();
 	}
 
 	void __stdcall idleTaskEnd(WinSMARTS* param)
 	{
+		// run when all tasks finished
 		param->idleTaskEnd();
 	}
 }
@@ -31,26 +36,30 @@ namespace {
 
 WinSMARTS::WinSMARTS(schedAlgo& scheduler, unsigned int interval)
 	: timerInterval(interval),
-	  algo(scheduler.clone()),
+	  algo(scheduler.clone()), // creates an instance of the Scheduler
 		contextSwitchFlag(true),
 		endOfTimeSlice(false),
 		ranAll(false),
 		currentTask(0)
 {
+	// create a task of a waste of time when there is a sleepy task
 	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", MAXINT, ::idleTaskEnd, this)));
+	// direct the scheduling process schedule the instance of SMART
 	algo->smarts = this;
 }
 
 void WinSMARTS::runTheTasks()
 {
-	setSigTimer(timerInterval, ::timerHandler, this);
 
+	setSigTimer(timerInterval, ::timerHandler, this);		// generates a signal every 'timerInterval' milliseconds
+
+	int nextTask;
 	while(!ranAll)
 	{
-		int nextTask = algo->schedule();
+		nextTask = algo->schedule();						// decide which thread will run now
 
 		setCurrentTask(nextTask);
-		tasks[(getCurrentTask())]->switchFrom(myContext);
+		tasks[(getCurrentTask())]->switchFrom(myContext);	//??
 	}
 }
 
@@ -63,6 +72,7 @@ void WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
 
 void WinSMARTS::taskEnd()
 {
+	//the task ended
 	setStatus(NOT_ACTIVE);
 	contextSwitchOn();
 	callScheduler();
@@ -70,20 +80,23 @@ void WinSMARTS::taskEnd()
 
 void WinSMARTS::timerHandler()
 {
-	if(getContextSwitch())
+	// run at a timer interrupt
+	if(getContextSwitch()) // if Context Switch is enabled
 		tasks[(getCurrentTask())]->switchTo(myContext);
 	else
-		setEndOfTimeSlice();
+		setEndOfTimeSlice(); // mark exceeded of the time
 }
 
 void WinSMARTS::systemIdle()
 {
+	// busy wait when there is a sleepy task
 	while(isTaskSleeping())
 		;
 }
 
 void WinSMARTS::idleTaskEnd()
 {
+	// run when all tasks finished
 	ranAll = true;
 	taskEnd();
 }

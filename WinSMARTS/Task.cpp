@@ -2,12 +2,13 @@
 #include "Task.h"
 
 
-Task::Task(TaskProc fn, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS* smarts)
-	: name(name), priority(priority), origPriority(priority), status(READY)
+Task::Task(TaskProc fn, std::string const &namep, int priorityp, TaskProc taskEnd, WinSMARTS* smarts)
+	: name(namep), priority(priorityp), origPriority(priorityp), status(READY)
 {
-	taskPtr = newTask(fn, smarts, stack + 65536, taskEnd, smarts);
+	taskPtr = newTask(fn, smarts, stack + 65536, taskEnd, smarts);		//??
 }
 
+//decreases sleep counter when passes on asleep task
 void Task::sleepDecr()
 {
 	if(status == SLEEPING)

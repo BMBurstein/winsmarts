@@ -3,15 +3,17 @@
 
 #ifdef _WIN32
 
-namespace {
+namespace 
+{
 	struct timerThreadStuff
 	{
-		HANDLE contextThread;
-		TIMER_CALLBACK cb;
-		unsigned int ms;
-		void* param;
+		HANDLE contextThread; // the thread should be alert
+		TIMER_CALLBACK cb; // target function
+		unsigned int ms; // interval
+		void* param; //needed variables
 	};
 
+	//timer function to alert after "ms" miliseconds (in params)
 	DWORD WINAPI timerFunc(void * param)
 	{
 		timerThreadStuff * tts = (timerThreadStuff*)param;
@@ -22,7 +24,7 @@ namespace {
 		while(1)
 		{
 			Sleep(tts->ms);
-			SuspendThread(tts->contextThread);
+			SuspendThread(tts->contextThread); // ?? alert our thread
 			GetThreadContext(tts->contextThread, &ctxt);
 #if defined(_X86_)
 			ctxt.Esp -= sizeof(tts->param);
@@ -46,17 +48,28 @@ namespace {
 	}
 }
 
+// create thread for timer
 void setSigTimer(unsigned int ms, TIMER_CALLBACK cb, void* param)
 {
-	DWORD tid;
-	HANDLE myHandle;
-	DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &myHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+	DWORD tid; // 4 bites allocation
+	HANDLE myHandle; //  void* pointer
+	DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &myHandle, 0, FALSE, DUPLICATE_SAME_ACCESS); //??
+
 	timerThreadStuff *tts = new timerThreadStuff;
-	tts->contextThread = myHandle;
-	tts->cb = cb;
-	tts->ms = ms;
-	tts->param = param;
-	HANDLE timerThread = CreateThread(NULL, 0, timerFunc, tts, 0, &tid);
+	tts->contextThread = myHandle; // ?? where are we initialize this param?
+	tts->cb = cb; // target function
+	tts->ms = ms; // interval
+	tts->param = param; //needed variables
+
+	HANDLE timerThread = CreateThread
+		(
+			NULL, // security attributes
+			0, // stack size
+			timerFunc, // function to be executed by the thread
+			tts, // variable(s) to be passed to the thread.
+			0, // creation flags
+			&tid // receives the thread identifier
+		);
 }
 
 #endif // _WIN32
