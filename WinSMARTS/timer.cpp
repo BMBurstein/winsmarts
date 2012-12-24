@@ -7,10 +7,11 @@ namespace
 {
 	struct timerThreadStuff
 	{
-		HANDLE contextThread; // the thread should be alert
-		TIMER_CALLBACK cb; // target function
+		HANDLE contextThread; // call the handler in the context of this thread
+		TIMER_CALLBACK cb; // interupt handler
 		unsigned int ms; // interval
-		void* param; //needed variables
+		void* param;
+		bool noStop;
 	};
 
 	//timer function to alert after "ms" miliseconds (in params)
@@ -21,7 +22,7 @@ namespace
 
 		ctxt.ContextFlags = CONTEXT_CONTROL;
 
-		while(1)
+		while(tts->noStop)
 		{
 			Sleep(tts->ms);
 			SuspendThread(tts->contextThread); // ?? alert our thread
@@ -46,20 +47,21 @@ namespace
 
 		return 0;
 	}
-}
+} // namespace
 
-// create thread for timer
-void setSigTimer(unsigned int ms, TIMER_CALLBACK cb, void* param)
+// simulate an interrupt timer
+void* setSigTimer(unsigned int ms, TIMER_CALLBACK cb, void* param)
 {
-	DWORD tid; // 4 bites allocation
-	HANDLE myHandle; //  void* pointer
-	DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &myHandle, 0, FALSE, DUPLICATE_SAME_ACCESS); //??
+	DWORD tid;
+	HANDLE myHandle;
+	DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &myHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
 
 	timerThreadStuff *tts = new timerThreadStuff;
-	tts->contextThread = myHandle; // ?? where are we initialize this param?
-	tts->cb = cb; // target function
+	tts->contextThread = myHandle;
+	tts->cb = cb; // interrupt handler
 	tts->ms = ms; // interval
-	tts->param = param; //needed variables
+	tts->param = param;
+	tts->noStop = true;
 
 	HANDLE timerThread = CreateThread
 		(
@@ -70,6 +72,13 @@ void setSigTimer(unsigned int ms, TIMER_CALLBACK cb, void* param)
 			0, // creation flags
 			&tid // receives the thread identifier
 		);
+
+	return &(tts->noStop);
+}
+
+void stopSigTimer(void* timer)
+{
+	*(bool*)timer = false;
 }
 
 #endif // _WIN32

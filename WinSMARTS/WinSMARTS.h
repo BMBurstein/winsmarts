@@ -43,7 +43,7 @@ public:
 
   int getCurrentTask() const { return currentTask; }                                   // Get the current running task index
   void setCurrentTask(int taskNum) { currentTask = taskNum; }                          // Set the current running task index
-  int getTotalTasks() const { return tasks.size(); }                                   // Get total declared tasks
+  size_t getTotalTasks() const { return tasks.size(); }                                   // Get total declared tasks
   bool getDeadlock() const { return deadlock; }                                        // Get deadlock flag
   void setDeadlock() { deadlock = true; }                                              // Turn on deadlock flag
   bool getContextSwitch() const { return contextSwitchFlag; }                          // Get 'context switch' flag status

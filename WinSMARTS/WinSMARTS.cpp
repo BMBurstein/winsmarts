@@ -44,7 +44,7 @@ WinSMARTS::WinSMARTS(schedAlgo& scheduler, unsigned int interval)
 
 void WinSMARTS::runTheTasks()
 {
-	setSigTimer(timerInterval, ::timerHandler, this);		// generates a signal every 'timerInterval' milliseconds
+	void* timer = setSigTimer(timerInterval, ::timerHandler, this);		// generates a signal every 'timerInterval' milliseconds
 
 	int nextTask;
 	while(!ranAll)
@@ -54,6 +54,8 @@ void WinSMARTS::runTheTasks()
 		setCurrentTask(nextTask);
 		tasks[getCurrentTask()]->switchFrom(myContext);
 	}
+
+	stopSigTimer(timer);
 }
 
 void WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
