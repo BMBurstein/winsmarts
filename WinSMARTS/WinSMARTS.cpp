@@ -25,12 +25,6 @@ namespace
 		//Waste of time
 		param->systemIdle();
 	}
-
-	void __stdcall idleTaskEnd(WinSMARTS* param)
-	{
-		// run when all tasks finished
-		param->idleTaskEnd();
-	}
 }
 
 
@@ -43,14 +37,13 @@ WinSMARTS::WinSMARTS(schedAlgo& scheduler, unsigned int interval)
 		currentTask(0)
 {
 	// create a task of a waste of time when there is a sleepy task
-	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", MAXINT, ::idleTaskEnd, this)));
+	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", MAXINT, ::taskEnd, this)));
 	// direct the scheduling process schedule the instance of SMART
 	algo->smarts = this;
 }
 
 void WinSMARTS::runTheTasks()
 {
-
 	setSigTimer(timerInterval, ::timerHandler, this);		// generates a signal every 'timerInterval' milliseconds
 
 	int nextTask;
@@ -59,13 +52,12 @@ void WinSMARTS::runTheTasks()
 		nextTask = algo->schedule();						// decide which thread will run now
 
 		setCurrentTask(nextTask);
-		tasks[(getCurrentTask())]->switchFrom(myContext);	//??
+		tasks[getCurrentTask()]->switchFrom(myContext);
 	}
 }
 
 void WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
 {
-	//context.emplace_back(fn, name, priority, ::taskEnd);
 	tasks.push_back(unique_ptr<Task>(new Task(fn, name, priority, ::taskEnd, this)));
 	currentTask = tasks.size() - 1;
 }
@@ -92,13 +84,7 @@ void WinSMARTS::systemIdle()
 	// busy wait when there is a sleepy task
 	while(isTaskSleeping())
 		;
-}
-
-void WinSMARTS::idleTaskEnd()
-{
-	// run when all tasks finished
 	ranAll = true;
-	taskEnd();
 }
 
 void WinSMARTS::contextSwitchOn()

@@ -13,12 +13,12 @@ class WinSMARTS;
 class Task
 {
 private:
-	TaskAsm taskPtr;		// ??
+	TaskObj taskPtr;		// Context of this task
 	unsigned int priority;
 	int origPriority;
 	taskStatus status;
 	std::string name;
-	char stack[65536];		// ?? did this stack contains thread's registers and flags?
+	char stack[65536];
 	int sleepCounter;
 
 	Task(Task const &);
@@ -37,8 +37,8 @@ public:
 	void setStatus(taskStatus stat) { status = stat; }
 	void setSleep(int t) { sleepCounter = t; }
 
-	void switchFrom(TaskAsm &tsk) { contextSwitch(&tsk, taskPtr); }		// ??
-	void switchTo(TaskAsm tsk) { contextSwitch(&taskPtr, tsk); }		// ??
+	void switchFrom(TaskObj &tsk) { contextSwitch(&tsk, taskPtr); }
+	void switchTo(TaskObj tsk) { contextSwitch(&taskPtr, tsk); }
 };
 
 #endif // TASK_H

@@ -21,10 +21,10 @@ private:
   std::unique_ptr<schedAlgo> algo;                    // schedular algorithim object 
   Tasks tasks;                                        // contains all task for running
   bool deadlock;                                      // turned on when deadlock detected in scheduler
-  bool contextSwitchFlag;                             // Enables/disables context switch
+  bool contextSwitchFlag;                             // enables/disables context switch
   bool endOfTimeSlice;                                // turn on when a task has exceeded the interval while context switch is disabled
   bool ranAll;                                        // turn on if all tasks finished
-  TaskAsm myContext;                                  // ??
+  TaskObj myContext;                                  // Context of runTheTasks() (the scheduelr)
 
   void setEndOfTimeSlice() { endOfTimeSlice = true; } //Indicates that there is a task that has exceeded the interval 
 
@@ -35,7 +35,7 @@ public:
   WinSMARTS(schedAlgo& scheduler, unsigned int interval = 55);
 
   void runTheTasks();                                                                  // Start running the tasks
-  void declareTask(TaskProc fn, std::string const &name, int priority);                
+  void declareTask(TaskProc fn, std::string const &name, int priority);                // Add a new task to the tasks vector
 
   void contextSwitchOn();                                                              // Enable context switch
   void sleep(unsigned int ms);                                                         // Send currnet task to sleep
@@ -64,7 +64,6 @@ public:
   void taskEnd();
   void timerHandler();
   void systemIdle();
-  void idleTaskEnd();
 };
 
 #endif // WINSMARTS_H
