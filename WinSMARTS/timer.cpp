@@ -5,6 +5,11 @@
 
 namespace 
 {
+	extern "C"
+	{
+		void popReg();
+	}
+
 	struct timerThreadStuff
 	{
 		HANDLE contextThread; // call the handler in the context of this thread
@@ -14,7 +19,7 @@ namespace
 		bool noStop;
 	};
 
-	//timer function to alert after "ms" miliseconds (in params)
+	// timer function to alert after "ms" miliseconds (in params)
 	DWORD WINAPI timerFunc(void * param)
 	{
 		timerThreadStuff * tts = (timerThreadStuff*)param;
@@ -28,12 +33,20 @@ namespace
 			SuspendThread(tts->contextThread); // ?? alert our thread
 			GetThreadContext(tts->contextThread, &ctxt);
 #if defined(_X86_)
-			ctxt.Esp -= sizeof(tts->param);
-			*((uintptr_t *)ctxt.Esp) = (uintptr_t)tts->param;
-			ctxt.Esp -= sizeof(ctxt.Eip);
-			*((DWORD *)ctxt.Esp) = ctxt.Eip;
+			ctxt.Esp -= sizeof(void*) * 11;
+			((uintptr_t *)ctxt.Esp)[10] = ctxt.Eip;                // push return address
+			((uintptr_t *)ctxt.Esp)[9] = (uintptr_t)(ctxt.EFlags); // push registers
+			((uintptr_t *)ctxt.Esp)[8] = (uintptr_t)(ctxt.Eax);
+			((uintptr_t *)ctxt.Esp)[7] = (uintptr_t)(ctxt.Ebx);
+			((uintptr_t *)ctxt.Esp)[6] = (uintptr_t)(ctxt.Ecx);
+			((uintptr_t *)ctxt.Esp)[5] = (uintptr_t)(ctxt.Edx);
+			((uintptr_t *)ctxt.Esp)[4] = (uintptr_t)(ctxt.Ebp);
+			((uintptr_t *)ctxt.Esp)[3] = (uintptr_t)(ctxt.Esi);
+			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)(ctxt.Edi);
+			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->param);  // push parameter to callback
+			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)popReg;        // pop registers before returning
 			ctxt.Eip = (uintptr_t)(tts->cb);
-#elif defined(_AMD64_)
+#elif defined(_AMD64_) // BROKEN!
 			ctxt.Rsp -= sizeof(tts->param);
 			*((uintptr_t *)ctxt.Rsp) = (uintptr_t)tts->param;
 			ctxt.Rsp -= sizeof(ctxt.Rip);
