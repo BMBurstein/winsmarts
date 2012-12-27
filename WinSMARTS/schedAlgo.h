@@ -11,4 +11,11 @@ public:
 	virtual ~schedAlgo() { }
 };
 
+class RR : public schedAlgo
+{
+	int schedule() const;	
+	RR* clone() const;
+};
+
+
 #endif // SCHEDALGO_H

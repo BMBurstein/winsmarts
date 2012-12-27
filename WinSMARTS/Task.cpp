@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "StdAfx.h" // ?? why we need it?
 #include "Task.h"
 
 
