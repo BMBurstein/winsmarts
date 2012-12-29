@@ -28,9 +28,9 @@ namespace
 }
 
 
-WinSMARTS::WinSMARTS(schedAlgo& scheduler, unsigned int interval)
+WinSMARTS::WinSMARTS(schedAlgo* scheduler, unsigned int interval)
 	: timerInterval(interval),
-	  algo(scheduler.clone()), // creates an instance of the Scheduler
+	  algo(scheduler), // creates an instance of the Scheduler
 		contextSwitchFlag(true),
 		endOfTimeSlice(false),
 		ranAll(false),

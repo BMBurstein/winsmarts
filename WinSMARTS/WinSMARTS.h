@@ -32,7 +32,7 @@ private:
   WinSMARTS& operator=(WinSMARTS const&);
 
 public:
-  WinSMARTS(schedAlgo& scheduler, unsigned int interval = 55);
+  WinSMARTS(schedAlgo* scheduler, unsigned int interval = 55);
 
   void runTheTasks();                                                                  // Start running the tasks
   void declareTask(TaskProc fn, std::string const &name, int priority);                // Add a new task to the tasks vector

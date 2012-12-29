@@ -20,8 +20,3 @@ int RR::schedule() const
 		nextTask = 0;
 	return nextTask;
 }
-
-RR* RR::clone() const
-{
-	return new RR(*this);
-}

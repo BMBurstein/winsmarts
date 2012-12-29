@@ -3,9 +3,8 @@
 using namespace std;
 
 #pragma optimize("", off)
-void BusyWait(int j, char c)
+void BusyWait(int j)
 {
-	cout << c;
 	for(int i=0; i<j; i++);
 }
 #pragma optimize("", on)
@@ -14,7 +13,10 @@ void __stdcall a(WinSMARTS * SMARTS)
 {
 	for(int i=0; i<50; ++i)
 	{
-		BusyWait(50000000, 'a');
+		SMARTS->contextSwitchOff();
+		cout << 'a';
+		SMARTS->contextSwitchOn();
+		BusyWait(5000000);
 	}
 }
 
@@ -22,7 +24,10 @@ void __stdcall b(WinSMARTS * SMARTS)
 {
 	for(int i=0; i<50; ++i)
 	{
-		BusyWait(50000000, 'b');
+		SMARTS->contextSwitchOff();
+		cout << 'b';
+		SMARTS->contextSwitchOn();
+		BusyWait(40000000);
 	}
 }
 
@@ -30,7 +35,10 @@ void __stdcall c(WinSMARTS * SMARTS)
 {
 	for(int i=0; i<50; ++i)
 	{
-		BusyWait(50000000, 'c');
+		SMARTS->contextSwitchOff();
+		cout << 'c';
+		SMARTS->contextSwitchOn();
+		BusyWait(50000000);
 	}
 }
 
@@ -40,7 +48,7 @@ int main()
 {
 	setvbuf(stdout, NULL, _IONBF, 0);	// cancel buffering on screen printing
 
-	RR rr;								// scheduler instance
+	RR *rr = new RR;								// scheduler instance
 	WinSMARTS SMARTS(rr, 55);			// instance of our system
 	
 
