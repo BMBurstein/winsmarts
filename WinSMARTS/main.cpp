@@ -48,8 +48,7 @@ int main()
 {
 	setvbuf(stdout, NULL, _IONBF, 0);	// cancel buffering on screen printing
 
-	RR *rr = new RR;								// scheduler instance
-	WinSMARTS SMARTS(rr, 55);			// instance of our system
+	WinSMARTS SMARTS(RoundRobin, 55);			// instance of our system
 	
 
 	SMARTS.declareTask(a, "a", 5);		//

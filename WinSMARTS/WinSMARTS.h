@@ -18,7 +18,7 @@ private:
 
   unsigned int timerInterval;                         // milliseconds between timer pulses
   unsigned int currentTask;                           // index of currently running task
-  std::unique_ptr<schedAlgo> algo;                    // schedular algorithim object 
+  SchedAlgo* algo;                                     // schedular algorithim object 
   Tasks tasks;                                        // contains all task for running
   bool deadlock;                                      // turned on when deadlock detected in scheduler
   bool contextSwitchFlag;                             // enables/disables context switch
@@ -32,7 +32,7 @@ private:
   WinSMARTS& operator=(WinSMARTS const&);
 
 public:
-  WinSMARTS(schedAlgo* scheduler, unsigned int interval = 55);
+  WinSMARTS(SchedAlgo* scheduler, unsigned int interval = 55);
 
   void runTheTasks();                                                                  // Start running the tasks
   void declareTask(TaskProc fn, std::string const &name, int priority);                // Add a new task to the tasks vector

@@ -2,18 +2,8 @@
 #ifndef SCHEDALGO_H
 #define SCHEDALGO_H
 
-class schedAlgo
-{
-public:
-	virtual int schedule() const = 0;
-	WinSMARTS* smarts;
-	virtual ~schedAlgo() { }
-};
+typedef int (SchedAlgo)(WinSMARTS*);
 
-class RR : public schedAlgo
-{
-	int schedule() const;
-};
-
+SchedAlgo RoundRobin;
 
 #endif // SCHEDALGO_H

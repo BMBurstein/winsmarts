@@ -28,7 +28,7 @@ namespace
 }
 
 
-WinSMARTS::WinSMARTS(schedAlgo* scheduler, unsigned int interval)
+WinSMARTS::WinSMARTS(SchedAlgo* scheduler, unsigned int interval)
 	: timerInterval(interval),
 	  algo(scheduler), // creates an instance of the Scheduler
 		contextSwitchFlag(true),
@@ -38,8 +38,6 @@ WinSMARTS::WinSMARTS(schedAlgo* scheduler, unsigned int interval)
 {
 	// create a task of a waste of time when there is a sleepy task
 	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", MAXINT, ::taskEnd, this)));
-	// direct the scheduling process schedule the instance of SMART
-	algo->smarts = this;
 }
 
 void WinSMARTS::runTheTasks()
@@ -49,7 +47,7 @@ void WinSMARTS::runTheTasks()
 	int nextTask;
 	while(!ranAll)
 	{
-		nextTask = algo->schedule();						// decide which thread will run now
+		nextTask = algo(this);						// decide which thread will run now
 
 		setCurrentTask(nextTask);
 		tasks[getCurrentTask()]->switchFrom(myContext);
