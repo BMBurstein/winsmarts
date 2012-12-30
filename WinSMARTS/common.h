@@ -2,13 +2,22 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-class WinSMARTS;
+#if _M_X64
 
-typedef void (__stdcall * TaskProc) (WinSMARTS *); //??
+#if !_M_AMD64
+# define _M_AMD64 _M_X64
+#endif
 
-typedef void* TaskObj;
+#ifndef _WIN64
+#	define _WIN64
+#endif
 
-extern "C" { TaskObj __cdecl newTask(TaskProc fn, void* fnParam, char* stack, TaskProc ret, void* retParam); }
-extern "C" { void __cdecl contextSwitch(TaskObj* oldContext, TaskObj newContext); }
+#ifndef _AMD64
+#	define _AMD64
+#endif
+
+#undef _M_IX86
+
+#endif
 
 #endif // COMMON_H

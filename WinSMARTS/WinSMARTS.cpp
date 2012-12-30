@@ -1,8 +1,7 @@
-#include "StdAfx.h"
 #include "WinSMARTS.h"
+#include <climits>
 #include "timer.h"
 #include "schedAlgo.h"
-
 using namespace std;
 
 
@@ -37,7 +36,7 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, unsigned int interval)
 		currentTask(0)
 {
 	// create a task of a waste of time when there is a sleepy task
-	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", MAXINT, ::taskEnd, this)));
+	tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", INT_MAX, ::taskEnd, this)));
 }
 
 void WinSMARTS::runTheTasks()

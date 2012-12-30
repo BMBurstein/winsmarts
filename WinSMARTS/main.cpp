@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <iostream>
 #include "WinSMARTS.h"
 using namespace std;
 
