@@ -1,18 +1,18 @@
 .model flat, c
 .code
 
-contextSwitch64 PROC EXPORT
+contextSwitch PROC EXPORT
 
 	ret
-contextSwitch64 ENDP
+contextSwitch ENDP
 
-newTask64 PROC EXPORT
-
-	ret
-newTask64 ENDP
-
-popReg64 PROC EXPORT
+newTask PROC EXPORT
 
 	ret
-popReg64 ENDP
+newTask ENDP
+
+popReg PROC EXPORT
+
+	ret
+popReg ENDP
 end

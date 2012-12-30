@@ -13,8 +13,8 @@ namespace
 	struct timerThreadStuff
 	{
 		HANDLE contextThread; // call the handler in the context of this thread
-		TIMER_CALLBACK cb; // interupt handler
-		unsigned int ms; // interval
+		TIMER_CALLBACK interuptHandlerPointer; // interupt handler
+		unsigned int ms; // interval		
 		void* param;
 		bool noStop;
 	};
@@ -25,17 +25,17 @@ namespace
 		timerThreadStuff * tts = (timerThreadStuff*)param;
 		CONTEXT ctxt;
 
-		ctxt.ContextFlags = CONTEXT_CONTROL;
+		ctxt.ContextFlags = CONTEXT_CONTROL; //??
 
 		while(tts->noStop)
 		{
 			Sleep(tts->ms);
-			SuspendThread(tts->contextThread); // ?? alert our thread
+			SuspendThread(tts->contextThread); // stop our thread
 			GetThreadContext(tts->contextThread, &ctxt);
 #if defined(_X86_)
 			ctxt.Esp -= sizeof(void*) * 11;
-			((uintptr_t *)ctxt.Esp)[10] = ctxt.Eip;                // push return address
-			((uintptr_t *)ctxt.Esp)[9] = (uintptr_t)(ctxt.EFlags); // push registers
+			((uintptr_t *)ctxt.Esp)[10] = ctxt.Eip;                // backup return address of the interrupted task onto its stack
+			((uintptr_t *)ctxt.Esp)[9] = (uintptr_t)(ctxt.EFlags); // backup registers and flags of the interrupted task onto its stack
 			((uintptr_t *)ctxt.Esp)[8] = (uintptr_t)(ctxt.Eax);
 			((uintptr_t *)ctxt.Esp)[7] = (uintptr_t)(ctxt.Ebx);
 			((uintptr_t *)ctxt.Esp)[6] = (uintptr_t)(ctxt.Ecx);
@@ -44,14 +44,14 @@ namespace
 			((uintptr_t *)ctxt.Esp)[3] = (uintptr_t)(ctxt.Esi);
 			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)(ctxt.Edi);
 			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->param);  // push parameter to callback
-			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)popReg;        // pop registers before returning
-			ctxt.Eip = (uintptr_t)(tts->cb);
+			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)popReg;        // restore registers before returning (for the next running)
+			ctxt.Eip = (uintptr_t)(tts->interuptHandlerPointer);
 #elif defined(_AMD64_) // BROKEN!
 			ctxt.Rsp -= sizeof(tts->param);
 			*((uintptr_t *)ctxt.Rsp) = (uintptr_t)tts->param;
 			ctxt.Rsp -= sizeof(ctxt.Rip);
 			*((DWORD64 *)ctxt.Rsp) = ctxt.Rip;
-			ctxt.Rip = (uintptr_t)(tts->cb);
+			ctxt.Rip = (uintptr_t)(tts->interuptHandlerPointer);
 #endif
 			SetThreadContext(tts->contextThread, &ctxt);
 			ResumeThread(tts->contextThread);
@@ -63,17 +63,18 @@ namespace
 } // namespace
 
 // simulate an interrupt timer
-void* setSigTimer(unsigned int ms, TIMER_CALLBACK cb, void* param)
+void* setSigTimer(unsigned int ms, TIMER_CALLBACK interuptHandlerPointer, void* param)
 {
 	DWORD tid;
 	HANDLE myHandle;
-	DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &myHandle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+	// put absolute address of main thread in 'myHandle'
+	DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &myHandle, 0, FALSE, DUPLICATE_SAME_ACCESS); 
 
 	timerThreadStuff *tts = new timerThreadStuff;
-	tts->contextThread = myHandle;
-	tts->cb = cb; // interrupt handler
-	tts->ms = ms; // interval
-	tts->param = param;
+	tts->contextThread = myHandle;	//address of main thread
+	tts->interuptHandlerPointer = interuptHandlerPointer; // interrupt handler to jump to it
+	tts->ms = ms; // interval	
+	tts->param = param; // ?? why we need it?
 	tts->noStop = true;
 
 	HANDLE timerThread = CreateThread

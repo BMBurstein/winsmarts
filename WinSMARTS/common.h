@@ -4,7 +4,7 @@
 
 class WinSMARTS;
 
-typedef void (__stdcall * TaskProc) (WinSMARTS *);
+typedef void (__stdcall * TaskProc) (WinSMARTS *); //??
 
 typedef void* TaskObj;
 
