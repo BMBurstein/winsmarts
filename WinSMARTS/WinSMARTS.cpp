@@ -16,13 +16,13 @@ namespace
 
 	void __stdcall timerHandler(void* param)
 	{
-		// run every 'timerInterval' milliseconds
+		// run at a timer interrupt, invoke every 'timerInterval' milliseconds
 		((WinSMARTS*)param)->timerHandler();
 	}
 
 	void __stdcall systemIdle(WinSMARTS* param)
 	{
-		//Waste of time
+		//Waste of time, when there is only task(s) sleepy
 		param->systemIdle();
 	}
 }
@@ -31,7 +31,7 @@ namespace
 WinSMARTS::WinSMARTS(SchedAlgo* scheduler, unsigned int interval)
 	: timerInterval(interval),
 	  algo(scheduler), // creates an instance of the Scheduler
-		contextSwitchFlag(true),
+		contextSwitchAllow(true),
 		endOfTimeSlice(false),
 		ranAll(false),
 		currentTask(0)
@@ -47,10 +47,10 @@ void WinSMARTS::runTheTasks()
 	int nextTask;
 	while(!ranAll)
 	{
-		nextTask = algo(this);						// decide which thread will run now
+		nextTask = algo(this);								// decide which task will run now
 
 		setCurrentTask(nextTask);
-		tasks[getCurrentTask()]->switchFrom(myContext);
+		tasks[getCurrentTask()]->switchFrom(myContext);		// ContextSwitch-> goes to the selectesd task 
 	}
 
 	stopSigTimer(timer);
@@ -64,7 +64,7 @@ void WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
 
 void WinSMARTS::taskEnd()
 {
-	//the task ended
+	// Continue from taskEnd stdcall
 	setStatus(NOT_ACTIVE);
 	contextSwitchOn();
 	callScheduler();
@@ -72,16 +72,16 @@ void WinSMARTS::taskEnd()
 
 void WinSMARTS::timerHandler()
 {
-	// run at a timer interrupt
-	if(getContextSwitch()) // if Context Switch is enabled
-		tasks[(getCurrentTask())]->switchTo(myContext);
+	// Continue from timerHandler stdcall
+	if(getContextSwitch())								// if Context Switch is enabled
+		tasks[(getCurrentTask())]->switchTo(myContext);	// ContextSwitch-> goes to the 'runTheTasks' function
 	else
 		setEndOfTimeSlice(); // mark exceeded of the time
 }
 
 void WinSMARTS::systemIdle()
 {
-	// busy wait when there is a sleepy task
+	// Continue from systemIdle stdcall
 	while(isTaskSleeping())
 		;
 	ranAll = true;
@@ -89,7 +89,7 @@ void WinSMARTS::systemIdle()
 
 void WinSMARTS::contextSwitchOn()
 {
-	contextSwitchFlag = true;
+	contextSwitchAllow = true;
 
 	if(endOfTimeSlice)
 	{
@@ -110,4 +110,13 @@ bool WinSMARTS::isTaskSleeping()
 		if((*it)->getStatus() == SLEEPING)
 			return true;
 	return false;
+}
+
+
+//not implemented yet
+WinSMARTS& WinSMARTS::operator=(WinSMARTS const&)
+{
+}
+WinSMARTS::WinSMARTS(WinSMARTS const&)
+{
 }

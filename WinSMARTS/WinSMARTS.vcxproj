@@ -163,6 +163,7 @@
     <ClInclude Include="WinSMARTS.h" />
   </ItemGroup>
   <ItemGroup>
+    <MASM Include="x64.asm" />
     <MASM Include="x86.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

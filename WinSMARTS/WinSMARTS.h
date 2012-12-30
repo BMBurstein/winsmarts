@@ -21,7 +21,7 @@ private:
   SchedAlgo* algo;                                     // schedular algorithim object 
   Tasks tasks;                                        // contains all task for running
   bool deadlock;                                      // turned on when deadlock detected in scheduler
-  bool contextSwitchFlag;                             // enables/disables context switch
+  bool contextSwitchAllow;                             // enables/disables context switch
   bool endOfTimeSlice;                                // turn on when a task has exceeded the interval while context switch is disabled
   bool ranAll;                                        // turn on if all tasks finished
   TaskObj myContext;                                  // Context of runTheTasks() (the scheduelr)
@@ -46,8 +46,8 @@ public:
   size_t getTotalTasks() const { return tasks.size(); }                                   // Get total declared tasks
   bool getDeadlock() const { return deadlock; }                                        // Get deadlock flag
   void setDeadlock() { deadlock = true; }                                              // Turn on deadlock flag
-  bool getContextSwitch() const { return contextSwitchFlag; }                          // Get 'context switch' flag status
-  void contextSwitchOff() { contextSwitchFlag = false; }                               // Disable context switch
+  bool getContextSwitch() const { return contextSwitchAllow; }                          // Get 'context switch' flag status
+  void contextSwitchOff() { contextSwitchAllow = false; }                               // Disable context switch
   std::string getName(int taskNum) const { return tasks.at(taskNum)->getName(); }      // Get task's name by it's index
   std::string getName() const { return getName(getCurrentTask()) ; }                   // Get current task's name
   taskStatus getStatus(int taskNum) const { return tasks.at(taskNum)->getStatus(); }   // Get task's status by it's index

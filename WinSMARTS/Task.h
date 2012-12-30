@@ -37,8 +37,8 @@ public:
 	void setStatus(taskStatus stat) { status = stat; }
 	void setSleep(int t) { sleepCounter = t; }
 
-	void switchFrom(TaskObj &tsk) { contextSwitch(&tsk, taskPtr); }
-	void switchTo(TaskObj tsk) { contextSwitch(&taskPtr, tsk); }
+	void switchFrom(TaskObj &tsk) { contextSwitch(&tsk, taskPtr); } // contextSwitch from schedular to this task instance
+	void switchTo(TaskObj tsk) { contextSwitch(&taskPtr, tsk); }	// contextSwitch from this task instance to schedular
 };
 
 #endif // TASK_H
