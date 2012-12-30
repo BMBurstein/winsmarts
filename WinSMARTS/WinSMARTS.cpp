@@ -97,6 +97,7 @@ void WinSMARTS::contextSwitchOn()
 		callScheduler();
 	}
 }
+
 void WinSMARTS::sleep(unsigned int ms)
 {
 	tasks[getCurrentTask()]->setSleep(ms / timerInterval);
@@ -106,7 +107,7 @@ void WinSMARTS::sleep(unsigned int ms)
 
 bool WinSMARTS::isTaskSleeping()
 {
-	for(TaskIt it = tasks.begin(); it != tasks.end(); ++it)
+	for(TaskIt it = tasks.begin(); it != tasks.end(); ++it) //?? tasks.end() is the last task of one task after (=Null)?
 		if((*it)->getStatus() == SLEEPING)
 			return true;
 	return false;
