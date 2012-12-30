@@ -7,7 +7,7 @@ namespace
 {
 	extern "C"
 	{
-		void popReg();
+		void doTimerAsm();
 	}
 
 	struct timerThreadStuff
@@ -33,19 +33,11 @@ namespace
 			SuspendThread(tts->contextThread); // ?? alert our thread
 			GetThreadContext(tts->contextThread, &ctxt);
 #if defined(_X86_)
-			ctxt.Esp -= sizeof(void*) * 11;
-			((uintptr_t *)ctxt.Esp)[10] = ctxt.Eip;                // push return address
-			((uintptr_t *)ctxt.Esp)[9] = (uintptr_t)(ctxt.EFlags); // push registers
-			((uintptr_t *)ctxt.Esp)[8] = (uintptr_t)(ctxt.Eax);
-			((uintptr_t *)ctxt.Esp)[7] = (uintptr_t)(ctxt.Ebx);
-			((uintptr_t *)ctxt.Esp)[6] = (uintptr_t)(ctxt.Ecx);
-			((uintptr_t *)ctxt.Esp)[5] = (uintptr_t)(ctxt.Edx);
-			((uintptr_t *)ctxt.Esp)[4] = (uintptr_t)(ctxt.Ebp);
-			((uintptr_t *)ctxt.Esp)[3] = (uintptr_t)(ctxt.Esi);
-			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)(ctxt.Edi);
+			ctxt.Esp -= sizeof(void*) * 3;
+			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)ctxt.Eip;        // pop registers before returning
 			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->param);  // push parameter to callback
-			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)popReg;        // pop registers before returning
-			ctxt.Eip = (uintptr_t)(tts->cb);
+			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)(tts->cb);
+			ctxt.Eip = (uintptr_t)(doTimerAsm);
 #elif defined(_AMD64_) // BROKEN!
 			ctxt.Rsp -= sizeof(tts->param);
 			*((uintptr_t *)ctxt.Rsp) = (uintptr_t)tts->param;

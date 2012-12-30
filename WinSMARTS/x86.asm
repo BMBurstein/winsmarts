@@ -32,15 +32,15 @@ newTask PROC EXPORT
 	ret
 newTask ENDP
 
-popReg PROC EXPORT
-	pop edi
-	pop esi
-	pop ebp
-	pop edx
-	pop ecx
-	pop ebx
-	pop eax
-	popfd				; flags ?? why not esp?
+doTimerAsm PROC EXPORT
+	pushfd
+	pushad
+	mov eax, [esp+24h]
+	push [esp+28h]
+	call eax
+	popad
+	popfd
+	add esp, 08h
 	ret
-popReg ENDP
+doTimerAsm ENDP
 end

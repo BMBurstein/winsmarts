@@ -111,12 +111,3 @@ bool WinSMARTS::isTaskSleeping()
 			return true;
 	return false;
 }
-
-
-//not implemented yet
-WinSMARTS& WinSMARTS::operator=(WinSMARTS const&)
-{
-}
-WinSMARTS::WinSMARTS(WinSMARTS const&)
-{
-}

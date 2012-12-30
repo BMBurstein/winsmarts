@@ -3,7 +3,6 @@
 #define WINSMARTS_H
 
 #include "common.h"
-#include <memory>
 #include <string>
 #include <vector>
 #include "Task.h"
