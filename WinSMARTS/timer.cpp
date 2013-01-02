@@ -14,7 +14,7 @@ namespace
 	struct timerThreadStuff
 	{
 		HANDLE contextThread; // call the handler in the context of this thread
-		TIMER_CALLBACK interuptHandlerPointer; // interupt handler
+		TIMER_CALLBACK interruptHandlerPointer; // interrupt handler
 		unsigned int ms; // interval		
 		void* param;
 		bool noStop;
@@ -35,19 +35,19 @@ namespace
 			GetThreadContext(tts->contextThread, &ctxt);
 #if defined(_X86_)
 			ctxt.Esp -= sizeof(void*) * 3;
-			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)ctxt.Eip;        // pop registers before returning
-			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->param);  // push parameter to callback
-			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)(tts->interuptHandlerPointer);
-			ctxt.Eip = (uintptr_t)(doTimerAsm);
+			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)ctxt.Eip;        // backup next instruction which was should be processed in our thread
+			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->param);    // push parameter for interrupt handler (on our program- pointer to SMART instance)- needed at 'doTimerAsm' function
+			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)(tts->interruptHandlerPointer); // push instruction pointer of interrupt handler- needed at 'doTimerAsm' function
+			ctxt.Eip = (uintptr_t)(doTimerAsm);	// put pointer for 'doTimerAsm' function into instruction pointer of task which we stoped
 #elif defined(_AMD64_) // BROKEN!
 			ctxt.Rsp -= sizeof(tts->param);
 			*((uintptr_t *)ctxt.Rsp) = (uintptr_t)tts->param;
 			ctxt.Rsp -= sizeof(ctxt.Rip);
 			*((DWORD64 *)ctxt.Rsp) = ctxt.Rip;
-			ctxt.Rip = (uintptr_t)(tts->interuptHandlerPointer);
+			ctxt.Rip = (uintptr_t)(tts->interruptHandlerPointer);
 #endif
-			SetThreadContext(tts->contextThread, &ctxt);
-			ResumeThread(tts->contextThread);
+			SetThreadContext(tts->contextThread, &ctxt);	// apply the changes on registers of our thread
+			ResumeThread(tts->contextThread); // resume with 'doTimerAsm' function
 		}
 		delete tts;
 
@@ -56,7 +56,7 @@ namespace
 } // namespace
 
 // simulate an interrupt timer
-void* setSigTimer(unsigned int ms, TIMER_CALLBACK interuptHandlerPointer, void* param)
+void* setSigTimer(unsigned int ms, TIMER_CALLBACK interruptHandlerPointer, void* param)
 {
 	DWORD tid;
 	HANDLE myHandle;
@@ -65,9 +65,9 @@ void* setSigTimer(unsigned int ms, TIMER_CALLBACK interuptHandlerPointer, void* 
 
 	timerThreadStuff *tts = new timerThreadStuff;
 	tts->contextThread = myHandle;	//address of main thread
-	tts->interuptHandlerPointer = interuptHandlerPointer; // interrupt handler to jump to it
+	tts->interruptHandlerPointer = interruptHandlerPointer; // interrupt handler to jump to it
 	tts->ms = ms; // interval	
-	tts->param = param; // ?? why we need it?
+	tts->param = param; // interrupt handler owner
 	tts->noStop = true;
 
 	HANDLE timerThread = CreateThread

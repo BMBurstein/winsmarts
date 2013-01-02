@@ -16,7 +16,7 @@ void __stdcall a(WinSMARTS * SMARTS)
 		SMARTS->contextSwitchOff();
 		cout << 'a';
 		SMARTS->contextSwitchOn();
-		BusyWait(5000000);
+		BusyWait(40000000);
 	}
 }
 
@@ -38,7 +38,7 @@ void __stdcall c(WinSMARTS * SMARTS)
 		SMARTS->contextSwitchOff();
 		cout << 'c';
 		SMARTS->contextSwitchOn();
-		BusyWait(50000000);
+		BusyWait(40000000);
 	}
 }
 

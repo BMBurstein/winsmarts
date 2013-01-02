@@ -11,8 +11,8 @@ newTask PROC EXPORT
 	ret
 newTask ENDP
 
-popReg PROC EXPORT
+doTimerAsm PROC EXPORT
 
 	ret
-popReg ENDP
+doTimerAsm ENDP
 end
