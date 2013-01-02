@@ -64,7 +64,7 @@ void WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
 void WinSMARTS::taskEnd()
 {
 	// Continue from taskEnd stdcall
-	setStatus(NOT_ACTIVE);
+	setCurrentStatus(NOT_ACTIVE);
 	contextSwitchOn();
 	callScheduler();
 }

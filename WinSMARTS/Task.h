@@ -32,7 +32,7 @@ public:
 	std::string getName() const { return name; }
 	int getPriority() const { return priority; }
 	void incrPriority() { if(priority) --priority; }
-	void resetPriority() { priority = origPriority; }
+	void setOriginalPriority() { priority = origPriority; }
 	taskStatus getStatus() const { return status; }
 	void setStatus(taskStatus stat) { status = stat; }
 	void setSleep(int t) { sleepCounter = t; }
