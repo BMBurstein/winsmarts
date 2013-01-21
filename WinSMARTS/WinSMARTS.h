@@ -58,7 +58,10 @@ public:
   void incrPriority(int taskNum) { tasks.at(taskNum)->incrPriority(); }                // Increase task's priority
   void setCurrentOriginalPriority(int taskNum) { tasks.at(taskNum)->setOriginalPriority(); } // Restore original current task's priority
   void sleepDecr(int taskNum) { tasks.at(taskNum)->sleepDecr(); }                      // Decrease task's sleep time
-  void callScheduler() { timerHandler(); }                                             // return the control to the scheduler
+  void callScheduler() { timerHandler(); }                                             // Return the control to the scheduler
+  Event* getExpectedEvent(int taskNum){ return (taskNum >= 0 && taskNum <= getTotalTasks())? tasks.at(taskNum)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
+  Event* getCurrentExpectedEvent() { return tasks.at(getCurrentTask())->getExpectedEvent(); } // Get current task's expectedEvent
+  void setCurrentExpectedEvent(Event* expectedEventp) { tasks.at(getCurrentTask())->setExpectedEvent(expectedEventp); }
 
   void taskEnd();
   void timerHandler();

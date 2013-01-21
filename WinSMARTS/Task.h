@@ -2,6 +2,7 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include "Event.h"
 #include "asm.h"
 #include <string>
 #include <cstddef>
@@ -20,6 +21,7 @@ private:
 	std::string name;
 	char stack[65536];
 	int sleepCounter;
+	Event* expectedEvent; 
 
 	Task(Task const &);
 	Task& operator=(Task const &);
@@ -36,6 +38,8 @@ public:
 	taskStatus getStatus() const { return status; }
 	void setStatus(taskStatus stat) { status = stat; }
 	void setSleep(int t) { sleepCounter = t; }
+	Event* getExpectedEvent(){ return expectedEvent; }
+	void setExpectedEvent(Event* expectedEventp){ expectedEvent = expectedEventp; }
 
 	void switchFrom(TaskObj &tsk) { contextSwitch(&tsk, taskPtr); } // contextSwitch from schedular to this task instance
 	void switchTo(TaskObj tsk) { contextSwitch(&taskPtr, tsk); }	// contextSwitch from this task instance to schedular
