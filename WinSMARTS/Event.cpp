@@ -7,18 +7,18 @@ Event::Event(WinSMARTS* SMARTSp)
 	reset();
 }
 
-void Event::send(std::string name, void *param, int synch)
+void Event::send(std::string targetName, void *param, bool synch)
 {
+	while(testAndSet( )); // while the receiver not read previous data yet
+
+	this->source = SMARTS->getCurrentName( );
+	this->data = param;
+
 	int i;
-	while(testAndSet( )); // while the reciver not read the data yet
-
-	source = SMARTS->getCurrentName( );
-	data = param;
-
 	for (i=1; i < SMARTS->getTotalTasks(); i++)
-		if (SMARTS->getName(i) == name)
+		if (SMARTS->getName(i) == targetName)
 			break;
-	if (i < SMARTS->getTotalTasks()) // the target found
+	if (i < SMARTS->getTotalTasks()) // if target found
 	{
 		if (SMARTS->getStatus(i)==SUSPENDED && SMARTS->getExpectedEvent(i)==this) // if the target is suspended and it wait for this event
 			SMARTS->setStatus(i,READY);
@@ -27,18 +27,18 @@ void Event::send(std::string name, void *param, int synch)
 		{
 			senderWaitIndex = SMARTS->getCurrentTask( );
 			SMARTS->setCurrentStatus(SUSPENDED);
-			dest = name;
+			dest = targetName;
 			SMARTS->callScheduler( );
 		}
 		else
-			dest = name;
+			dest = targetName;
 	}
 }
 
 void *Event::wait(std::string &sourceP)
 {
-	void* param;									//delivered data
-	if (!flag || dest!=SMARTS->getCurrentName())
+	void* param;                                    //delivered data
+	if (!isEventWaitForReceiver || dest!=SMARTS->getCurrentName())    // if nothing received yet
 	{
 		SMARTS->setCurrentExpectedEvent(this);
 		SMARTS->setCurrentStatus(SUSPENDED);
@@ -47,24 +47,24 @@ void *Event::wait(std::string &sourceP)
 
 	sourceP = source;
 	param = data;
-	if (senderWaitIndex >= 0)
+	if (senderWaitIndex >= 0)                        // if synchronic sending
 		SMARTS->setStatus(senderWaitIndex,READY);
 	reset();
 	return (param);
 }
 
-bool Event::isArrived(std::string &sourceP) // checked by target, if so get sender name
+bool Event::isArrivedEvent(std::string &sourceP) // checked by target, if so get sender name
 {
-	if (flag)
+	if (isEventWaitForReceiver)
 		sourceP = source;
-	return flag;
+	return isEventWaitForReceiver;
 }
 
 bool Event::reset()
 {
-	if (flag) 
+	if (isEventWaitForReceiver) 
 	{
-		flag=false;
+		isEventWaitForReceiver=false;
 		data = NULL;
 		source = dest = "";
 		senderWaitIndex = -1; //??
@@ -73,12 +73,12 @@ bool Event::reset()
 	return false;
 }
 
-bool Event::testAndSet() // checked by sender, turn on the flag
+bool Event::testAndSet() // checked by sender, turn on the isEventWaitForReceiver
 {
 	bool tmp;
 	SMARTS->contextSwitchOff( );
-	tmp = flag;
-	flag = true;
+	tmp = isEventWaitForReceiver;
+	isEventWaitForReceiver = true;
 	SMARTS->contextSwitchOn( );
 	return tmp;
 }
