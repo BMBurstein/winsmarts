@@ -17,7 +17,7 @@ private:
 
   unsigned int timerInterval;                         // milliseconds between timer pulses
   unsigned int currentTask;                           // index of currently running task
-  SchedAlgo* algo;                                    // schedular algorithim object 
+  SchedAlgo* algo;                                    // schedular function 
   Tasks tasks;                                        // contains all task for running
   bool deadlock;                                      // turned on when deadlock detected in scheduler
   bool contextSwitchAllow;                            // enables/disables context switch

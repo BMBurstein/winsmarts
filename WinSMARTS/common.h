@@ -9,11 +9,11 @@
 #endif
 
 #ifndef _WIN64
-#	define _WIN64
+#  define _WIN64
 #endif
 
 #ifndef _AMD64
-#	define _AMD64
+#  define _AMD64
 #endif
 
 #undef _M_IX86
