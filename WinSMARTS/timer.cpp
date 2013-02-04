@@ -40,11 +40,11 @@ namespace
 			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)(tts->interruptHandlerPointer); // push instruction pointer of interrupt handler- needed at 'doTimerAsm' function
 			ctxt.Eip = (uintptr_t)(doTimerAsm);	// put pointer for 'doTimerAsm' function into instruction pointer of task which we stoped
 #elif defined(_AMD64_) // BROKEN!
-			ctxt.Rsp -= sizeof(tts->param);
-			*((uintptr_t *)ctxt.Rsp) = (uintptr_t)tts->param;
-			ctxt.Rsp -= sizeof(ctxt.Rip);
-			*((DWORD64 *)ctxt.Rsp) = ctxt.Rip;
-			ctxt.Rip = (uintptr_t)(tts->interruptHandlerPointer);
+			ctxt.Rsp -= sizeof(void*) * 3;
+			((uintptr_t *)ctxt.Rsp)[2] = (uintptr_t)ctxt.Rip;
+			((uintptr_t *)ctxt.Rsp)[1] = (uintptr_t)(tts->param);
+			((uintptr_t *)ctxt.Rsp)[0] = (uintptr_t)(tts->interuptHandlerPointer);
+			ctxt.Rip = (uintptr_t)(doTimerAsm);
 #endif
 			SetThreadContext(tts->contextThread, &ctxt);	// apply the changes on registers of our thread
 			ResumeThread(tts->contextThread); // resume with 'doTimerAsm' function
