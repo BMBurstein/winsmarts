@@ -1,5 +1,5 @@
-#include "timer.h"
 #include "common.h"
+#include "timer.h"
 #include <Windows.h>
 
 #ifdef _WIN32

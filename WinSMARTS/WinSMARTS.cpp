@@ -55,16 +55,17 @@ void WinSMARTS::runTheTasks()
   stopSigTimer(timer);
 }
 
-void WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
+tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
 {
   tasks.push_back(unique_ptr<Task>(new Task(fn, name, priority, ::taskEnd, this)));
   currentTask = tasks.size() - 1;
+  return currentTask;
 }
 
 void WinSMARTS::taskEnd()
 {
   // Continue from taskEnd stdcall
-  setCurrentStatus(NOT_ACTIVE);
+  setTaskStatus(NOT_ACTIVE);
   contextSwitchOn();
   callScheduler();
 }
@@ -75,7 +76,7 @@ void WinSMARTS::timerHandler()
   if(getContextSwitch())                // if Context Switch is enabled
     tasks[(getCurrentTask())]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
   else
-    setEndOfTimeSlice(); // mark exceeded of the time
+    endOfTimeSlice = true; // mark exceeded of the time
 }
 
 void WinSMARTS::systemIdle()

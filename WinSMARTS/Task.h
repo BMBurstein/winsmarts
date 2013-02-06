@@ -9,40 +9,48 @@
 
 enum taskStatus { READY, NOT_ACTIVE, SUSPENDED, SLEEPING };
 
+const unsigned int MAX_PRIORITY = -1;
+
 class WinSMARTS;
 
 class Task
 {
 private:
-  TaskObj taskPtr;    // Context of this task
+  char         stack[65536];           // must be first to align stack
+  TaskObj      taskPtr;                // Context of this task
   unsigned int priority;
-  int origPriority;
-  taskStatus status;
-  std::string name;
-  char stack[65536];
-  int sleepCounter;
-  Event* expectedEvent; 
+  unsigned int const    origPriority;  // for reseting priority
+  taskStatus   status;
+  std::string  name;
+  unsigned int sleepCounter;
+  Event*       expectedEvent;
 
-  Task(Task const &);
-  Task& operator=(Task const &);
+  Task(Task const &);            //   / Not implemented. Prevents copying
+  Task& operator=(Task const &); //   \ Copying a TaskObj is dangerous !!
 
 public:
-  Task(TaskProc fn, std::string const &namep, int priorityp, TaskProc taskEnd, WinSMARTS*);
+  Task(TaskProc fn, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*);
 
-  void sleepDecr();
+  void sleepDecr(); // decrease sleep counter
 
-  std::string getName() const { return name; }
-  int getPriority() const { return priority; }
-  void incrPriority() { if(priority) --priority; }
-  void setOriginalPriority() { priority = origPriority; }
+  // accessors
+  std::string getName()  const { return name; }
+  int getPriority()      const { return priority; }
   taskStatus getStatus() const { return status; }
-  void setStatus(taskStatus stat) { status = stat; }
-  void setSleep(int t) { sleepCounter = t; }
+
+  // mutators
+  void incrPriority()              { if(priority) --priority; }
+  void decrPriority()              { if(priority<MAX_PRIORITY) ++priority; }
+  void setPriority(unsigned int p) { if(p<MAX_PRIORITY) priority=p; }
+  void restorePriority()           { priority = origPriority; }              // reset priority back to original
+  void setStatus(taskStatus stat)  { status = stat; }
+  void setSleep(int t)                { sleepCounter = t; }
+
   Event* getExpectedEvent(){ return expectedEvent; }
   void setExpectedEvent(Event* expectedEventp){ expectedEvent = expectedEventp; }
 
-  void switchFrom(TaskObj &tsk) { contextSwitch(&tsk, taskPtr); } // contextSwitch from schedular to this task instance
-  void switchTo(TaskObj tsk) { contextSwitch(&taskPtr, tsk); }  // contextSwitch from this task instance to schedular
+  void switchFrom(TaskObj &tsk) { contextSwitch(&tsk, taskPtr); } // contextSwitch from tsk to this task instance
+  void switchTo(TaskObj tsk)    { contextSwitch(&taskPtr, tsk); } // contextSwitch from this task instance to tsk
 };
 
 #endif // TASK_H

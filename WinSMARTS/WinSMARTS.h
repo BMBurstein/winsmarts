@@ -6,60 +6,77 @@
 #include <string>
 #include <vector>
 #include "Task.h"
+#include "asm.h"
 #include "schedAlgo.h"
+#include "Log.h"
 
+typedef size_t tid_t;
 
 class WinSMARTS
 {
 private:
-  typedef std::vector<std::unique_ptr<Task> > Tasks; 
+  typedef std::vector<std::unique_ptr<Task> > Tasks;
   typedef Tasks::iterator TaskIt;
 
-  unsigned int timerInterval;                         // milliseconds between timer pulses
-  unsigned int currentTask;                           // index of currently running task
-  SchedAlgo* algo;                                    // schedular function 
-  Tasks tasks;                                        // contains all task for running
-  bool deadlock;                                      // turned on when deadlock detected in scheduler
-  bool contextSwitchAllow;                            // enables/disables context switch
-  bool endOfTimeSlice;                                // turn on when a task has exceeded the interval while context switch is disabled
-  bool ranAll;                                        // turn on if all tasks finished
-  TaskObj myContext;                                  // Context of runTheTasks() (the scheduelr)
+  Tasks        tasks;              // The task list
+  unsigned int timerInterval;      // milliseconds between timer pulses
+  tid_t        currentTask;        // index of currently running task
+  SchedAlgo*   algo;               // scheduler function
+  bool         deadlock;           // true when deadlock detected in scheduler
+  bool         contextSwitchAllow; // enables/disables context switch
+  bool         endOfTimeSlice;     // indicates a timer interrupt occured while context switch was disabled
+  bool         ranAll;             // flag for idle task. true if all tasks finished
+  TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
+  Log*         logger;
 
-  void setEndOfTimeSlice() { endOfTimeSlice = true; } //Indicates that there is a task that has exceeded the interval 
+  void log(std::string const s) const { logger->log(s.c_str()); }
+  void log(char const* s)       const { logger->log(s) }
 
-  WinSMARTS(WinSMARTS const&);
-  WinSMARTS& operator=(WinSMARTS const&);
+  WinSMARTS(WinSMARTS const&);            //   / Not implemented. Prevents copying
+  WinSMARTS& operator=(WinSMARTS const&); //   \ Copying a TaskObj is dangerous !!
+
+  friend Task;
 
 public:
   WinSMARTS(SchedAlgo* scheduler, unsigned int interval = 55);
 
-  void runTheTasks();                                                                  // Start running the tasks
-  void declareTask(TaskProc fn, std::string const &name, int priority);                // Add a new task to the tasks vector
+  void runTheTasks();                                                                   // Start running the tasks
+  tid_t declareTask(TaskProc fn, std::string const &name, int priority);                // Add a new task to the tasks vector
+  void callScheduler() { timerHandler(); }                                              // Return the control to the scheduler
 
-  void contextSwitchOn();                                                              // Enable context switch
-  void sleep(unsigned int ms);                                                         // Send currnet task to sleep
-  bool isTaskSleeping();                                                               // Indicates that there is a task is sleeping, and it can't be deadlock
+  // Task managment
+  void sleep(unsigned int ms);                                                          // Send currnet task to sleep
+  void contextSwitchOn();                                                               // Enable context switch
+  void contextSwitchOff() { contextSwitchAllow = false; }                               // Disable context switch
 
-  int getCurrentTask() const { return currentTask; }                                   // Get the current running task index
-  void setCurrentTask(int taskNum) { currentTask = taskNum; }                          // Set the current running task index
-  size_t getTotalTasks() const { return tasks.size(); }                                // Get total declared tasks
-  bool getDeadlock() const { return deadlock; }                                        // Get deadlock flag
-  void setDeadlock() { deadlock = true; }                                              // Turn on deadlock flag
-  bool getContextSwitch() const { return contextSwitchAllow; }                         // Get 'context switch' flag status
-  void contextSwitchOff() { contextSwitchAllow = false; }                              // Disable context switch
-  std::string getName(int taskNum) const { return tasks.at(taskNum)->getName(); }      // Get task's name by it's index
-  std::string getCurrentName() const { return getName(getCurrentTask()) ; }            // Get current task's name
-  taskStatus getStatus(int taskNum) const { return tasks.at(taskNum)->getStatus(); }   // Get task's status by it's index
-  taskStatus getCurrentStatus() const { return getStatus(getCurrentTask()); }          // Get current task's status
-  void setStatus(int taskNum, taskStatus stat) { tasks.at(taskNum)->setStatus(stat); } // Set task's status by it's index
-  void setCurrentStatus(taskStatus stat) { setStatus(getCurrentTask(), stat); }        // Set current task's status
-  int getPriority(int taskNum) const { return tasks.at(taskNum)->getPriority(); }      // Get task's priority by it's index
-  int getCurrentPriority() const { return getPriority(getCurrentTask()); }             // Get current task's priority
-  void incrPriority(int taskNum) { tasks.at(taskNum)->incrPriority(); }                // Increase task's priority
-  void setCurrentOriginalPriority(int taskNum) { tasks.at(taskNum)->setOriginalPriority(); } // Restore original current task's priority
-  void sleepDecr(int taskNum) { tasks.at(taskNum)->sleepDecr(); }                      // Decrease task's sleep time
-  void callScheduler() { timerHandler(); }                                             // Return the control to the scheduler
-  Event* getExpectedEvent(int taskNum){ return (taskNum >= 0 && taskNum <= getTotalTasks())? tasks.at(taskNum)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
+  bool isTaskSleeping();
+
+  // WinSMARTS accessors
+  tid_t       getCurrentTask()           const { return currentTask; }                       // tid of running task
+  size_t      getTotalTasks()            const { return tasks.size(); }                      // number of declared tasks
+  bool        getDeadlock()              const { return deadlock; }                          // true if in deadlock
+  bool        getContextSwitch()         const { return contextSwitchAllow; }                // true if context switching allowed
+  // Task accessors
+  std::string getTaskName(tid_t tid)     const { return tasks.at(tid)->getName(); }          // Get task's name by it's tid
+  std::string getTaskName()              const { return getTaskName(getCurrentTask()); }     // Get current task's name
+  taskStatus  getTaskStatus(tid_t tid)   const { return tasks.at(tid)->getStatus(); }        // Get task's status by it's tid
+  taskStatus  getTaskStatus()            const { return getTaskStatus(getCurrentTask()); }   // Get current task's status
+  int         getTaskPriority(tid_t tid) const { return tasks.at(tid)->getPriority(); }      // Get task's priority by it's tid
+  int         getTaskPriority()          const { return getTaskPriority(getCurrentTask()); } // Get current task's priority
+ 
+  // Task mutators
+  void incrTaskPriority(tid_t tid)               { tasks.at(tid)->incrPriority(); }          // Increase task's priority by tid
+  void incrTaskPriority()                        { incrTaskPriority(getCurrentTask()); }     // Increase current task's priority
+  void setTaskStatus(tid_t tid, taskStatus stat) { tasks.at(tid)->setStatus(stat); }         // Set task's status by it's tid
+  void setTaskStatus(taskStatus stat)            { setTaskStatus(getCurrentTask(), stat); }  // Set current task's status
+  void restorePriority(tid_t tid)                { tasks.at(tid)->restorePriority(); }       // Restore task's priority by tid
+  void restorePriority()                         { restorePriority(getCurrentTask()); }      // Restore current task's priority
+  
+  //void setDeadlock() { deadlock = true; }                                                  // Turn on deadlock flag
+  void setCurrentTask(int tid)                   { currentTask = tid; }                      // Set tid to be run
+  void sleepDecr(tid_t tid)                      { tasks.at(tid)->sleepDecr(); }             // Decrease task's sleep time
+
+  Event* getExpectedEvent(int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
   Event* getCurrentExpectedEvent() { return tasks.at(getCurrentTask())->getExpectedEvent(); } // Get current task's expectedEvent
   void setCurrentExpectedEvent(Event* expectedEventp) { tasks.at(getCurrentTask())->setExpectedEvent(expectedEventp); }
 
