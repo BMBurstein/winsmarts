@@ -69,7 +69,7 @@ void __stdcall E(WinSMARTS * SMARTS)
   cout << 'E';
   SMARTS->contextSwitchOn();
   for(int i=0; i<30; ++i) BusyWait(20000000);
-  SMARTS->contextSwitchOff();
+  //for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setCurrentStatus(SUSPENDED);  SMARTS->contextSwitchOff();}
   cout << 'E';
   SMARTS->contextSwitchOn();
 

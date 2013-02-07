@@ -39,6 +39,7 @@ public:
   void contextSwitchOn();                                                              // Enable context switch
   void sleep(unsigned int ms);                                                         // Send currnet task to sleep
   bool isTaskSleeping();                                                               // Indicates that there is a task is sleeping, and it can't be deadlock
+  std::vector<std::string> getSuspendedTasks();                                        // Indicates that there is a task is suspend, and it can be deadlock
 
   int getCurrentTask() const { return currentTask; }                                   // Get the current running task index
   void setCurrentTask(int taskNum) { currentTask = taskNum; }                          // Set the current running task index

@@ -21,7 +21,7 @@ namespace
   };
 
   // the timer loop
-  DWORD WINAPI timerFunc(void * param)
+  DWORD WINAPI timerFunc(void * param) //??
   {
     timerThreadStuff * tts = (timerThreadStuff*)param;
     CONTEXT ctxt;

@@ -44,9 +44,16 @@ void WinSMARTS::runTheTasks()
   void* timer = setSigTimer(timerInterval, ::timerHandler, this);    // generates a signal every 'timerInterval' milliseconds
 
   int nextTask;
-  while(!ranAll)
+  while(!ranAll && !getDeadlock())
   {
     nextTask = algo(this);                // decide which task will run now
+
+	std::vector<std::string> suspendedTaskList = getSuspendedTasks();
+	if (nextTask == 0 && !isTaskSleeping() && !suspendedTaskList.empty())
+	{
+		//**print all suspended list is needed**
+		setDeadlock();
+	}
 
     setCurrentTask(nextTask);
     tasks[getCurrentTask()]->switchFrom(myContext);    // ContextSwitch-> goes to the selectesd task 
@@ -110,4 +117,16 @@ bool WinSMARTS::isTaskSleeping()
     if((*it)->getStatus() == SLEEPING)
       return true;
   return false;
+}
+
+std::vector<std::string> WinSMARTS::getSuspendedTasks()
+{
+  std::vector<std::string> suspendedTaskList;
+  for(TaskIt it = tasks.begin(); it != tasks.end(); ++it) //?? tasks.end() is the last task of one task after (=Null)?
+    if((*it)->getStatus() == SUSPENDED)
+	{
+		new string((*it)->getName().c_str());
+		suspendedTaskList.push_back((*it)->getName());
+	}
+  return suspendedTaskList;
 }
