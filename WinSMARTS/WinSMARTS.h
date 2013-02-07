@@ -30,7 +30,7 @@ private:
   Log*         logger;
 
   void log(std::string const s) const { logger->log(s.c_str()); }
-  void log(char const* s)       const { logger->log(s) }
+  void log(char const* s)       const { logger->log(s); }
 
   WinSMARTS(WinSMARTS const&);            //   / Not implemented. Prevents copying
   WinSMARTS& operator=(WinSMARTS const&); //   \ Copying a TaskObj is dangerous !!

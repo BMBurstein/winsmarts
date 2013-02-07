@@ -6,7 +6,7 @@ class Log
 public:
   virtual ~Log() {}
 
-  virtual log(const char*) {};
-}
+  virtual void log(const char*) {};
+};
 
 #endif // LOG_H
