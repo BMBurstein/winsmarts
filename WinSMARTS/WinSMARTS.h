@@ -42,12 +42,12 @@ public:
 
   void runTheTasks();                                                                   // Start running the tasks
   tid_t declareTask(TaskProc fn, std::string const &name, int priority);                // Add a new task to the tasks vector
-  void callScheduler() { timerHandler(); }                                              // Return the control to the scheduler
+  void callScheduler() { if(!getContextSwitch()) contextSwitchOff(); timerHandler(); }  // Return the control to the scheduler
 
   // Task managment
   void sleep(unsigned int ms);                                                          // Send currnet task to sleep
   void contextSwitchOn();                                                               // Enable context switch
-  void contextSwitchOff() { contextSwitchAllow = false; }                               // Disable context switch
+  void contextSwitchOff() { contextSwitchAllow = false; tasks[getCurrentTask()]->setCS(true); } // Disable context switch
 
   bool isTaskSleeping();
 
