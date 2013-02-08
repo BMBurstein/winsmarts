@@ -50,30 +50,33 @@ WinSMARTS SMARTS(RoundRobin, 55);
 Event e(&SMARTS);
 void __stdcall D(WinSMARTS * SMARTS)
 {
-  e.wait((string)"E");//*****
-
   SMARTS->contextSwitchOff();
   cout << 'D';
   SMARTS->contextSwitchOn();
+
   for(int i=0; i<30; ++i) BusyWait(40000000);
+
   SMARTS->contextSwitchOff();
   cout << 'D';
   SMARTS->contextSwitchOn();
 
+  e.wait((string)"E");
 }
 
 void __stdcall E(WinSMARTS * SMARTS)
 {
+  e.send("D",NULL,false);
 
   SMARTS->contextSwitchOff();
   cout << 'E';
   SMARTS->contextSwitchOn();
+
   for(int i=0; i<30; ++i) BusyWait(20000000);
-  //for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setCurrentStatus(SUSPENDED);  SMARTS->contextSwitchOff();}
+  //for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setCurrentStatus(SUSPENDED);}
+
+  SMARTS->contextSwitchOff();
   cout << 'E';
   SMARTS->contextSwitchOn();
-
-  e.send("D",NULL,false); //*****
 }
 /********************************************************/
 
