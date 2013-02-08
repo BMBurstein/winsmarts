@@ -18,6 +18,7 @@ class Task
 private:
   char         stack[65536];           // must be first to align stack
   TaskObj      taskPtr;                // Context of this task
+  bool         CSOff;                  // true if this task disabled CS
   unsigned int priority;
   unsigned int const    origPriority;  // for reseting priority
   taskStatus   status;
@@ -37,6 +38,7 @@ public:
   std::string getName()  const { return name; }
   int getPriority()      const { return priority; }
   taskStatus getStatus() const { return status; }
+  bool getCS()           const { return CSOff; }
 
   // mutators
   void incrPriority()              { if(priority) --priority; }
@@ -44,7 +46,8 @@ public:
   void setPriority(unsigned int p) { if(p<MAX_PRIORITY) priority=p; }
   void restorePriority()           { priority = origPriority; }              // reset priority back to original
   void setStatus(taskStatus stat)  { status = stat; }
-  void setSleep(int t)                { sleepCounter = t; }
+  void setSleep(int t)             { sleepCounter = t; }
+  void setCS(bool cs)              { CSOff = cs; }
 
   Event* getExpectedEvent(){ return expectedEvent; }
   void setExpectedEvent(Event* expectedEventp){ expectedEvent = expectedEventp; }

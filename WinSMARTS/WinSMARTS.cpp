@@ -48,7 +48,17 @@ void WinSMARTS::runTheTasks()
   {
     nextTask = algo(this);                // decide which task will run now
 
+    if(!getContextSwitch())
+    {
+      tasks[getCurrentTask()]->setCS(true);
+      contextSwitchOn();
+    }
     setCurrentTask(nextTask);
+    if(tasks[getCurrentTask()]->getCS())
+    {
+      tasks[getCurrentTask()]->setCS(false);
+      contextSwitchOff();
+    }
     tasks[getCurrentTask()]->switchFrom(myContext);    // ContextSwitch-> goes to the selectesd task 
   }
 
