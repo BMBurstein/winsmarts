@@ -67,7 +67,7 @@ bool Event::reset()
     isEventWaitForReceiver=false;
     data = NULL;
     source = dest = "";
-    senderWaitIndex = -1; //??
+    senderWaitIndex = -1;
     return true;
   }
   return false;
@@ -80,6 +80,7 @@ bool Event::testAndSet() // checked by sender, turn on the isEventWaitForReceive
   tmp = isEventWaitForReceiver;
   isEventWaitForReceiver = true;
   SMARTS->contextSwitchOn( );
+  if (tmp) SMARTS->callScheduler(); // giving up CPU time
   return tmp;
 }
 

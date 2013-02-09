@@ -6,12 +6,12 @@
 .code
 
 contextSwitch PROC EXPORT
-  pushfd             ; bacup flags register (32 bits) of outgoing task
-  pushad             ; bacup general purpose registers (8*8 bits) of outgoing task
+  pushfd        ; bacup flags register (4 Bytes) of outgoing task
+  pushad        ; bacup general purpose registers (8*4 Bytes) of outgoing task
   mov eax, [esp+28h] ; oldContext (received parameter)
   mov ebx, [esp+2ch] ; newContext (received parameter)
-  mov [eax], esp     ; bacup stack pointer (32 bits) of outgoing task onto it's stack (before flags and general purpose registers)
-  mov esp, ebx       ; load stack pointer (32 bits) of incoming task
+  mov [eax], esp    ; bacup stack pointer (4 Bytes) of outgoing task onto it's stack (before flags and general purpose registers)
+  mov esp, ebx    ; load stack pointer (4 Bytes) of incoming task
   popad              ; restore general purpose registers of incoming task
   popfd              ; restore flags register of incoming task
   ret
@@ -33,8 +33,8 @@ newTask PROC EXPORT
 newTask ENDP
 
 doTimerAsm PROC EXPORT
-  pushfd             ; bacup flags register (32 bits)
-  pushad             ; bacup general purpose registers (8*8 bits)
+  pushfd        ; bacup flags register (4 Bytes)
+  pushad              ; bacup general purpose registers (8*4 Bytes)
   mov eax, [esp+24h] ; load interrupt handler pointer
   push [esp+28h]     ; push pointer to SMART instance again into stack head- required parameter for interrupt handler
   call eax           ; invoke interrupt handler (with SMART instance at parameter)

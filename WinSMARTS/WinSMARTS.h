@@ -48,6 +48,7 @@ public:
   void sleep(unsigned int ms);                                                          // Send currnet task to sleep
   void contextSwitchOn();                                                               // Enable context switch
   void contextSwitchOff() { contextSwitchAllow = false; tasks[getCurrentTask()]->setCS(true); } // Disable context switch
+  std::vector<std::string> getSuspendedTasks();                                        // Indicates that there is a task is suspend, and it can be deadlock
 
   bool isTaskSleeping();
 
