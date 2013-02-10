@@ -48,10 +48,20 @@ void WinSMARTS::runTheTasks()
   {
     nextTask = algo(this);                // decide which task will run now
 
-	std::vector<std::string> suspendedTaskList = getSuspendedTasks();
-	if (nextTask == 0 && !isTaskSleeping() && !suspendedTaskList.empty())
+	StringList suspendedTaskList = getSuspendedTasks();
+	if (nextTask == 0 && !isTaskSleeping() && !suspendedTaskList.empty()) // Deadlock detected
 	{
-		//**print all suspended list is needed**
+		for(StringIt it = suspendedTaskList.begin(); it != suspendedTaskList.end(); ++it) // Print all suspended tasks
+		{
+		  WinSMARTS::log("Task ");
+		  WinSMARTS::log(*it);
+		  WinSMARTS::log(" is Suspended!\n");
+
+		  printf ("\n%s%s%s", "Task ", (*it).c_str(), " is Suspended!");
+		}
+		
+		//std::system("pause");
+
 		setDeadlock();
 	}
 
@@ -123,14 +133,16 @@ bool WinSMARTS::isTaskSleeping()
   return false;
 }
 
-std::vector<std::string> WinSMARTS::getSuspendedTasks()
+WinSMARTS::StringList WinSMARTS::getSuspendedTasks()
 {
-  std::vector<std::string> suspendedTaskList;
-  for(TaskIt it = tasks.begin(); it != tasks.end(); ++it) //?? tasks.end() is the last task of one task after (=Null)?
+  contextSwitchOff();
+  StringList suspendedTaskList;
+  for(TaskIt it = tasks.begin(); it != tasks.end(); ++it)
     if((*it)->getStatus() == SUSPENDED)
 	{
 		new string((*it)->getName().c_str());
 		suspendedTaskList.push_back((*it)->getName());
 	}
+  contextSwitchOn();
   return suspendedTaskList;
 }

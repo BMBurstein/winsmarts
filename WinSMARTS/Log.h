@@ -1,12 +1,17 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <fstream>
+
 class Log
 {
-public:
-  virtual ~Log() {}
+  std::fstream LogFile;
 
-  virtual void log(const char*) {};
+public:
+  Log();
+  ~Log();
+  void log(const char* line);
+  void log(const std::string line);
 };
 
 #endif // LOG_H
