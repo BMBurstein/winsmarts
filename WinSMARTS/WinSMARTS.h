@@ -19,6 +19,7 @@ class WinSMARTS
 private:
   typedef std::vector<std::unique_ptr<Task> > Tasks;
   typedef Tasks::iterator TaskIt;
+  typedef std::vector<tid_t> TaskRef;
 
   Tasks        tasks;              // The task list
   unsigned int timerInterval;      // milliseconds between timer pulses
@@ -29,7 +30,7 @@ private:
   bool         endOfTimeSlice;     // indicates a timer interrupt occured while context switch was disabled
   bool         ranAll;             // flag for idle task. true if all tasks finished
   TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
-  Log&         logger;
+  Log          logger;
   int          logCount;
 
   void log(std::string const& evt, std::string const& msg = "") ;
@@ -48,10 +49,10 @@ public:
   void callScheduler() { if(!getContextSwitch()) contextSwitchOff(); timerHandler(); } // Return the control to the scheduler
 
   // Task managment
-  void sleep(unsigned int ms);                                                         // Send currnet task to sleep
-  void contextSwitchOn();                                                              // Enable context switch
-  void contextSwitchOff();                                                             // Disable context switch
-  std::vector<std::string> getSuspendedTasks();                                        // Indicates that there is a task is suspend, and it can be deadlock
+  void    sleep(unsigned int ms);                                                      // Send currnet task to sleep
+  void    contextSwitchOn();                                                           // Enable context switch
+  void    contextSwitchOff();                                                          // Disable context switch
+  TaskRef getTasksByStatus(taskStatus stat);                                           // Indicates that there is a task is suspend, and it can be deadlock
 
   bool isTaskSleeping();
 

@@ -49,17 +49,28 @@ void WinSMARTS::runTheTasks()
   int nextTask;
   while(!ranAll)
   {
+    contextSwitchAllow = false;
     nextTask = algo(this);                // decide which task will run now
 
     log("CS", tasks[nextTask]->getName());
     setCurrentTask(nextTask);
 
+    if(nextTask == 0 && !isTaskSleeping())
+    {
+      setDeadlock();
+      break;
+    }
+
     if(tasks[getCurrentTask()]->getCS())
       contextSwitchOff();
+    else
+      contextSwitchAllow = true;
     tasks[getCurrentTask()]->switchFrom(myContext);    // ContextSwitch-> goes to the selectesd task 
   }
 
   stopSigTimer(timer);
+
+
 }
 
 tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
@@ -122,20 +133,19 @@ void WinSMARTS::sleep(unsigned int ms)
 
 bool WinSMARTS::isTaskSleeping()
 {
-  for(TaskIt it = tasks.begin(); it != tasks.end(); ++it) //?? tasks.end() is the last task of one task after (=Null)?
+  for(TaskIt it = tasks.begin(); it != tasks.end(); ++it)
     if((*it)->getStatus() == SLEEPING)
       return true;
   return false;
 }
 
-std::vector<std::string> WinSMARTS::getSuspendedTasks()
+WinSMARTS::TaskRef WinSMARTS::getTasksByStatus(taskStatus stat)
 {
-  std::vector<std::string> suspendedTaskList;
-  for(TaskIt it = tasks.begin(); it != tasks.end(); ++it) //?? tasks.end() is the last task of one task after (=Null)?
-    if((*it)->getStatus() == SUSPENDED)
-  {
-    new string((*it)->getName().c_str());
-    suspendedTaskList.push_back((*it)->getName());
-  }
-  return suspendedTaskList;
+  TaskRef TaskList;
+  tid_t tid;
+  for(tid_t i = 0; i < tasks.size(); ++i)
+    if(tasks[i]->getStatus() == stat)
+      TaskList.push_back(i);
+
+  return TaskList;
 }

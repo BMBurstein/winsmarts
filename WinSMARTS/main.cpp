@@ -46,7 +46,7 @@ void __stdcall c(WinSMARTS * SMARTS)
 
 
 
-/********************************************************
+/********************************************************/
 LogUDP l;
 WinSMARTS SMARTS(RoundRobin, l, 55);//, LogUDP());
 Event e(&SMARTS);
@@ -85,8 +85,8 @@ void __stdcall E(WinSMARTS * SMARTS)
 int main()
 {
   setvbuf(stdout, NULL, _IONBF, 0);  // cancel buffering on screen printing
-  LogUDP l;
-  WinSMARTS SMARTS(RoundRobin, l, 55);      // instance of our system
+
+  //WinSMARTS SMARTS(RoundRobin, l, 55);      // instance of our system
   
 
   SMARTS.declareTask(a, "a", 5);    //
