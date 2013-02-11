@@ -2,6 +2,7 @@
 #include <climits>
 #include "timer.h"
 #include "schedAlgo.h"
+#include <sstream>
 using namespace std;
 
 
@@ -27,13 +28,15 @@ namespace
 }
 
 
-WinSMARTS::WinSMARTS(SchedAlgo* scheduler, unsigned int interval)
+WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
   : timerInterval(interval),
     algo(scheduler),
     contextSwitchAllow(true),
     endOfTimeSlice(false),
     ranAll(false),
-    currentTask(0)
+    currentTask(0),
+    logger(logger),
+    logCount(0)
 {
   // create a task of a waste of time when there is a sleepy task
   tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", INT_MAX, ::taskEnd, this)));
@@ -44,18 +47,13 @@ void WinSMARTS::runTheTasks()
   void* timer = setSigTimer(timerInterval, ::timerHandler, this);    // generates a signal every 'timerInterval' milliseconds
 
   int nextTask;
-  while(!ranAll && !getDeadlock())
+  while(!ranAll)
   {
     nextTask = algo(this);                // decide which task will run now
 
-	std::vector<std::string> suspendedTaskList = getSuspendedTasks();
-	if (nextTask == 0 && !isTaskSleeping() && !suspendedTaskList.empty())
-	{
-		//**print all suspended list is needed**
-		setDeadlock();
-	}
-
+    log("CS", tasks[nextTask]->getName());
     setCurrentTask(nextTask);
+
     if(tasks[getCurrentTask()]->getCS())
       contextSwitchOff();
     tasks[getCurrentTask()]->switchFrom(myContext);    // ContextSwitch-> goes to the selectesd task 
@@ -68,12 +66,17 @@ tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
 {
   tasks.push_back(unique_ptr<Task>(new Task(fn, name, priority, ::taskEnd, this)));
   currentTask = tasks.size() - 1;
+
+  stringstream ss;
+  ss << name << ';' << priority << ';' << currentTask;
+  log("DT", ss.str());
+
   return currentTask;
 }
 
 void WinSMARTS::taskEnd()
 {
-  // Continue from taskEnd stdcall
+  // Called from ::taskEnd
   setTaskStatus(NOT_ACTIVE);
   contextSwitchOn();
   callScheduler();
@@ -81,7 +84,8 @@ void WinSMARTS::taskEnd()
 
 void WinSMARTS::timerHandler()
 {
-  // Continue from timerHandler stdcall
+  // Called from ::timerHandler
+  log("TM");
   if(getContextSwitch())                // if Context Switch is enabled
     tasks[(getCurrentTask())]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
   else
@@ -90,7 +94,7 @@ void WinSMARTS::timerHandler()
 
 void WinSMARTS::systemIdle()
 {
-  // Continue from systemIdle stdcall
+  // Called from ::systemIdle
   while(isTaskSleeping())
     ;
   ranAll = true;
@@ -98,6 +102,7 @@ void WinSMARTS::systemIdle()
 
 void WinSMARTS::contextSwitchOn()
 {
+  log("CSOn");
   contextSwitchAllow = true;
   tasks[getCurrentTask()]->setCS(false);
 
@@ -128,9 +133,9 @@ std::vector<std::string> WinSMARTS::getSuspendedTasks()
   std::vector<std::string> suspendedTaskList;
   for(TaskIt it = tasks.begin(); it != tasks.end(); ++it) //?? tasks.end() is the last task of one task after (=Null)?
     if((*it)->getStatus() == SUSPENDED)
-	{
-		new string((*it)->getName().c_str());
-		suspendedTaskList.push_back((*it)->getName());
-	}
+  {
+    new string((*it)->getName().c_str());
+    suspendedTaskList.push_back((*it)->getName());
+  }
   return suspendedTaskList;
 }

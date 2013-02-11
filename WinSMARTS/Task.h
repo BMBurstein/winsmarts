@@ -9,7 +9,7 @@
 
 enum taskStatus { READY, NOT_ACTIVE, SUSPENDED, SLEEPING };
 
-const unsigned int MAX_PRIORITY = -1;
+const unsigned int WINSMARTS_MAX_PRIORITY = -1;
 
 class WinSMARTS;
 
@@ -42,8 +42,8 @@ public:
 
   // mutators
   void incrPriority()              { if(priority) --priority; }
-  void decrPriority()              { if(priority<MAX_PRIORITY) ++priority; }
-  void setPriority(unsigned int p) { if(p<MAX_PRIORITY) priority=p; }
+  void decrPriority()              { if(priority<WINSMARTS_MAX_PRIORITY) ++priority; }
+  void setPriority(unsigned int p) { if(p<WINSMARTS_MAX_PRIORITY) priority=p; }
   void restorePriority()           { priority = origPriority; }              // reset priority back to original
   void setStatus(taskStatus stat)  { status = stat; }
   void setSleep(int t)             { sleepCounter = t; }

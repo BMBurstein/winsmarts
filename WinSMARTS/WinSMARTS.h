@@ -8,7 +8,9 @@
 #include "Task.h"
 #include "asm.h"
 #include "schedAlgo.h"
+#include <sstream>
 #include "Log.h"
+#include <ctime>
 
 typedef size_t tid_t;
 
@@ -27,10 +29,11 @@ private:
   bool         endOfTimeSlice;     // indicates a timer interrupt occured while context switch was disabled
   bool         ranAll;             // flag for idle task. true if all tasks finished
   TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
-  Log*         logger;
+  Log&         logger;
+  int          logCount;
 
-  void log(std::string const s) const { logger->log(s.c_str()); }
-  void log(char const* s)       const { logger->log(s); }
+  void log(std::string const& evt, std::string const& msg = "") ;
+  void log(char const* evt, char const* msg = "")               ;
 
   WinSMARTS(WinSMARTS const&);            //   / Not implemented. Prevents copying
   WinSMARTS& operator=(WinSMARTS const&); //   \ Copying a TaskObj is dangerous !!
@@ -38,16 +41,16 @@ private:
   friend Task;
 
 public:
-  WinSMARTS(SchedAlgo* scheduler, unsigned int interval = 55);
+  WinSMARTS(SchedAlgo* scheduler,  Log& log, unsigned int interval = 55);
 
-  void runTheTasks();                                                                   // Start running the tasks
-  tid_t declareTask(TaskProc fn, std::string const &name, int priority);                // Add a new task to the tasks vector
-  void callScheduler() { if(!getContextSwitch()) contextSwitchOff(); timerHandler(); }  // Return the control to the scheduler
+  void runTheTasks();                                                                  // Start running the tasks
+  tid_t declareTask(TaskProc fn, std::string const &name, int priority);               // Add a new task to the tasks vector
+  void callScheduler() { if(!getContextSwitch()) contextSwitchOff(); timerHandler(); } // Return the control to the scheduler
 
   // Task managment
-  void sleep(unsigned int ms);                                                          // Send currnet task to sleep
-  void contextSwitchOn();                                                               // Enable context switch
-  void contextSwitchOff() { contextSwitchAllow = false; tasks[getCurrentTask()]->setCS(true); } // Disable context switch
+  void sleep(unsigned int ms);                                                         // Send currnet task to sleep
+  void contextSwitchOn();                                                              // Enable context switch
+  void contextSwitchOff();                                                             // Disable context switch
   std::vector<std::string> getSuspendedTasks();                                        // Indicates that there is a task is suspend, and it can be deadlock
 
   bool isTaskSleeping();
@@ -72,8 +75,8 @@ public:
   void setTaskStatus(taskStatus stat)            { setTaskStatus(getCurrentTask(), stat); }  // Set current task's status
   void restorePriority(tid_t tid)                { tasks.at(tid)->restorePriority(); }       // Restore task's priority by tid
   void restorePriority()                         { restorePriority(getCurrentTask()); }      // Restore current task's priority
-  
-  //void setDeadlock() { deadlock = true; }                                                  // Turn on deadlock flag
+
+  void setDeadlock()                             { deadlock = true; }                        // Turn on deadlock flag
   void setCurrentTask(int tid)                   { currentTask = tid; }                      // Set tid to be run
   void sleepDecr(tid_t tid)                      { tasks.at(tid)->sleepDecr(); }             // Decrease task's sleep time
 
@@ -85,5 +88,34 @@ public:
   void timerHandler();
   void systemIdle();
 };
+
+
+
+inline void WinSMARTS::contextSwitchOff()
+{
+  log("CSOff");
+  contextSwitchAllow = false;
+  tasks[getCurrentTask()]->setCS(true);
+}
+
+inline void WinSMARTS::log(std::string const& evt, std::string const& msg)
+{
+  contextSwitchAllow = false;
+  std::stringstream ss;
+
+  ss << logCount++ << ';' << evt << ';' << msg;
+  logger.log(ss.str().c_str(), ss.str().length());
+  contextSwitchAllow = true;
+}
+
+inline void WinSMARTS::log(char const* evt, char const* msg)
+{
+  contextSwitchAllow = false;
+  std::stringstream ss;
+
+  ss << logCount++ << ';' << evt << ';' << msg;
+  logger.log(ss.str().c_str(), ss.str().length());
+  contextSwitchAllow = true;
+}
 
 #endif // WINSMARTS_H
