@@ -30,7 +30,7 @@ private:
   bool         endOfTimeSlice;     // indicates a timer interrupt occured while context switch was disabled
   bool         ranAll;             // flag for idle task. true if all tasks finished
   TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
-  Log          logger;
+  Log&         logger;
   int          logCount;
 
   void log(std::string const& evt, std::string const& msg = "") ;
