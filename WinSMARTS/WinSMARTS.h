@@ -45,7 +45,7 @@ public:
   WinSMARTS(SchedAlgo* scheduler,  Log& log, unsigned int interval = 55);
 
   void runTheTasks();                                                                  // Start running the tasks
-  tid_t declareTask(TaskProc fn, std::string const &name, int priority);               // Add a new task to the tasks vector
+  tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority);               // Add a new task to the tasks vector
   void callScheduler() { if(!getContextSwitch()) contextSwitchOff(); timerHandler(); } // Return the control to the scheduler
 
   // Task managment
@@ -104,7 +104,7 @@ inline void WinSMARTS::log(std::string const& evt, std::string const& msg)
   contextSwitchAllow = false;
   std::stringstream ss;
 
-  ss << logCount++ << ';' << evt << ';' << msg;
+  ss << evt << ';' << logCount++ << ';' << msg;
   logger.log(ss.str().c_str(), ss.str().length());
   contextSwitchAllow = true;
 }
@@ -114,7 +114,7 @@ inline void WinSMARTS::log(char const* evt, char const* msg)
   contextSwitchAllow = false;
   std::stringstream ss;
 
-  ss << logCount++ << ';' << evt << ';' << msg;
+  ss << evt << ';' << logCount++ << ';' << msg;
   logger.log(ss.str().c_str(), ss.str().length());
   contextSwitchAllow = true;
 }

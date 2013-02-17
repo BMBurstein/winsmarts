@@ -39,7 +39,8 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
     logCount(0)
 {
   // create a task of a waste of time when there is a sleepy task
-  tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", INT_MAX, ::taskEnd, this)));
+  //tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", INT_MAX, ::taskEnd, this)));
+  declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY);
 }
 
 void WinSMARTS::runTheTasks()
@@ -73,13 +74,13 @@ void WinSMARTS::runTheTasks()
 
 }
 
-tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, int priority)
+tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority)
 {
   tasks.push_back(unique_ptr<Task>(new Task(fn, name, priority, ::taskEnd, this)));
   currentTask = tasks.size() - 1;
 
   stringstream ss;
-  ss << name << ';' << priority << ';' << currentTask;
+  ss << currentTask << ';' << name << ';' << priority;
   log("DT", ss.str());
 
   return currentTask;
