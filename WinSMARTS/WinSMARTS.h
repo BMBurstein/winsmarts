@@ -11,6 +11,8 @@
 #include <sstream>
 #include "Log.h"
 #include <ctime>
+#include <cstdio>
+#include <cstdarg>
 
 typedef size_t tid_t;
 
@@ -34,7 +36,7 @@ private:
   int          logCount;
 
   void log(std::string const& evt, std::string const& msg = "") ;
-  void log(char const* evt, char const* msg = "")               ;
+  void log(char const* evt, char const* msg = "", ...)               ;
 
   WinSMARTS(WinSMARTS const&);            //   / Not implemented. Prevents copying
   WinSMARTS& operator=(WinSMARTS const&); //   \ Copying a TaskObj is dangerous !!
@@ -109,12 +111,18 @@ inline void WinSMARTS::log(std::string const& evt, std::string const& msg)
   contextSwitchAllow = true;
 }
 
-inline void WinSMARTS::log(char const* evt, char const* msg)
+inline void WinSMARTS::log(char const* evt, char const* msg, ...)
 {
+  char buffer[256];
+  std::va_list args;
+  va_start(args, msg);
+  vsnprintf(buffer, 256, msg, args);
+  va_end(args);
+
   contextSwitchAllow = false;
   std::stringstream ss;
 
-  ss << evt << ';' << logCount++ << ';' << msg;
+  ss << evt << ';' << logCount++ << ';' << buffer;
   logger.log(ss.str().c_str(), ss.str().length());
   contextSwitchAllow = true;
 }

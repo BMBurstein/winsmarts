@@ -53,7 +53,7 @@ void WinSMARTS::runTheTasks()
     contextSwitchAllow = false;
     nextTask = algo(this);                // decide which task will run now
 
-    log("CS", tasks[nextTask]->getName());
+    log("CS", "%d", getCurrentTask());
     setCurrentTask(nextTask);
 
     if(nextTask == 0 && !isTaskSleeping())
