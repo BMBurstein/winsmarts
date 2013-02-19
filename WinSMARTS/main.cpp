@@ -47,8 +47,8 @@ void __stdcall c(WinSMARTS * SMARTS)
 
 
 /********************************************************/
-LogUDP l;
-WinSMARTS SMARTS(RoundRobin, l, 55);//, LogUDP());
+LogUDP Lg_UDP;
+WinSMARTS SMARTS(RoundRobin, Lg_UDP, 55);//, LogUDP());
 Event e(&SMARTS);
 void __stdcall D(WinSMARTS * SMARTS)
 {
@@ -57,6 +57,7 @@ void __stdcall D(WinSMARTS * SMARTS)
   SMARTS->contextSwitchOn();
 
   for(int i=0; i<30; ++i) BusyWait(40000000);
+  //for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setCurrentStatus(SUSPENDED);}
 
   SMARTS->contextSwitchOff();
   cout << 'D';
@@ -86,7 +87,7 @@ int main()
 {
   setvbuf(stdout, NULL, _IONBF, 0);  // cancel buffering on screen printing
 
-  //WinSMARTS SMARTS(RoundRobin, l, 55);      // instance of our system
+  //WinSMARTS SMARTS(RoundRobin, Lg_UDP, 55);      // instance of our system
   
 
   SMARTS.declareTask(a, "a", 5);    //

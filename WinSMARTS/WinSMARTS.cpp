@@ -38,6 +38,7 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
     logger(logger),
     logCount(0)
 {
+  log("Start");
   // create a task of a waste of time when there is a sleepy task
   //tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", INT_MAX, ::taskEnd, this)));
   declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY);
@@ -53,7 +54,7 @@ void WinSMARTS::runTheTasks()
     contextSwitchAllow = false;
     nextTask = algo(this);                // decide which task will run now
 
-    log("CS", "%d", getCurrentTask());
+    log("ContextSwitch", "%d", getCurrentTask());
     setCurrentTask(nextTask);
 
     if(nextTask == 0 && !isTaskSleeping())
@@ -81,7 +82,7 @@ tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int 
 
   stringstream ss;
   ss << currentTask << ';' << name << ';' << priority;
-  log("DT", ss.str());
+  log("DeclareTask", ss.str());
 
   return currentTask;
 }
@@ -97,7 +98,7 @@ void WinSMARTS::taskEnd()
 void WinSMARTS::timerHandler()
 {
   // Called from ::timerHandler
-  log("TM");
+  log("TimerHandler");
   if(getContextSwitch())                // if Context Switch is enabled
     tasks[(getCurrentTask())]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
   else
@@ -114,7 +115,7 @@ void WinSMARTS::systemIdle()
 
 void WinSMARTS::contextSwitchOn()
 {
-  log("CSOn");
+  log("ContextSwitch - On");
   contextSwitchAllow = true;
   tasks[getCurrentTask()]->setCS(false);
 

@@ -32,11 +32,11 @@ private:
   bool         endOfTimeSlice;     // indicates a timer interrupt occured while context switch was disabled
   bool         ranAll;             // flag for idle task. true if all tasks finished
   TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
-  Log&         logger;
-  int          logCount;
+  Log&         logger;             // Output log receiver
+  int          logCount;           // Line counter for logger
 
-  void log(std::string const& evt, std::string const& msg = "") ;
-  void log(char const* evt, char const* msg = "", ...)               ;
+  void log(std::string const& evt, std::string const& msg = "") ;  //Log function for string
+  void log(char const* evt, char const* msg = "", ...);            //Log function for char*
 
   WinSMARTS(WinSMARTS const&);            //   / Not implemented. Prevents copying
   WinSMARTS& operator=(WinSMARTS const&); //   \ Copying a TaskObj is dangerous !!
@@ -47,22 +47,22 @@ public:
   WinSMARTS(SchedAlgo* scheduler,  Log& log, unsigned int interval = 55);
 
   void runTheTasks();                                                                  // Start running the tasks
-  tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority);               // Add a new task to the tasks vector
+  tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority);      // Add a new task to the tasks vector
   void callScheduler() { if(!getContextSwitch()) contextSwitchOff(); timerHandler(); } // Return the control to the scheduler
 
   // Task managment
   void    sleep(unsigned int ms);                                                      // Send currnet task to sleep
   void    contextSwitchOn();                                                           // Enable context switch
   void    contextSwitchOff();                                                          // Disable context switch
-  TaskRef getTasksByStatus(taskStatus stat);                                           // Indicates that there is a task is suspend, and it can be deadlock
+  TaskRef getTasksByStatus(taskStatus stat);                                           // Get task list by task status
 
   bool isTaskSleeping();
 
   // WinSMARTS accessors
-  tid_t       getCurrentTask()           const { return currentTask; }                       // tid of running task
-  size_t      getTotalTasks()            const { return tasks.size(); }                      // number of declared tasks
-  bool        getDeadlock()              const { return deadlock; }                          // true if in deadlock
-  bool        getContextSwitch()         const { return contextSwitchAllow; }                // true if context switching allowed
+  tid_t       getCurrentTask()           const { return currentTask; }                       // Tid of running task
+  size_t      getTotalTasks()            const { return tasks.size(); }                      // Number of declared tasks
+  bool        getDeadlock()              const { return deadlock; }                          // True if in deadlock
+  bool        getContextSwitch()         const { return contextSwitchAllow; }                // True if context switching allowed
   // Task accessors
   std::string getTaskName(tid_t tid)     const { return tasks.at(tid)->getName(); }          // Get task's name by it's tid
   std::string getTaskName()              const { return getTaskName(getCurrentTask()); }     // Get current task's name
@@ -84,8 +84,8 @@ public:
   void sleepDecr(tid_t tid)                      { tasks.at(tid)->sleepDecr(); }             // Decrease task's sleep time
 
   Event* getExpectedEvent(int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
-  Event* getCurrentExpectedEvent() { return tasks.at(getCurrentTask())->getExpectedEvent(); } // Get current task's expectedEvent
-  void setCurrentExpectedEvent(Event* expectedEventp) { tasks.at(getCurrentTask())->setExpectedEvent(expectedEventp); }
+  Event* getCurrentExpectedEvent() { return tasks.at(getCurrentTask())->getExpectedEvent(); }                                // Get current task's expectedEvent
+  void setCurrentExpectedEvent(Event* expectedEventp) { tasks.at(getCurrentTask())->setExpectedEvent(expectedEventp); }      // Set current task's expectedEvent
 
   void taskEnd();
   void timerHandler();
@@ -96,7 +96,7 @@ public:
 
 inline void WinSMARTS::contextSwitchOff()
 {
-  log("CSOff");
+  log("ContextSwitch - Off");
   contextSwitchAllow = false;
   tasks[getCurrentTask()]->setCS(true);
 }
