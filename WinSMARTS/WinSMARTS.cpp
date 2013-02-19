@@ -38,8 +38,6 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
     logger(logger),
     logCount(0)
 {
-  // create a task of a waste of time when there is a sleepy task
-  //tasks.push_back(unique_ptr<Task>(new Task(::systemIdle, "System Idle", INT_MAX, ::taskEnd, this)));
   declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY);
 }
 

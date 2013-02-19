@@ -30,3 +30,8 @@ void LogUDP::log(const char* msg, size_t len)
 {
   sendto(s, msg, len, 0, (struct sockaddr *) &addr, sizeof(addr));
 }
+
+void LogUDP::clear()
+{
+  log("clear", 6);
+}

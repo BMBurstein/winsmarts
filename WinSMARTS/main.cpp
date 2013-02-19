@@ -6,7 +6,7 @@ using namespace std;
 #pragma optimize("", off)
 void BusyWait(long long j)
 {
-  for(int i=0; i<j; i++);
+  for(long long i=0; i<j; i++);
 }
 #pragma optimize("", on)
 
@@ -48,7 +48,7 @@ void __stdcall c(WinSMARTS * SMARTS)
 
 /********************************************************/
 LogUDP l;
-WinSMARTS SMARTS(RoundRobin, l, 55);//, LogUDP());
+WinSMARTS SMARTS(RoundRobin, l, 55);
 Event e(&SMARTS);
 void __stdcall D(WinSMARTS * SMARTS)
 {
@@ -56,18 +56,17 @@ void __stdcall D(WinSMARTS * SMARTS)
   cout << 'D';
   SMARTS->contextSwitchOn();
 
+  e.wait((string)"E");
+
   for(int i=0; i<30; ++i) BusyWait(40000000);
 
   SMARTS->contextSwitchOff();
   cout << 'D';
   SMARTS->contextSwitchOn();
-
-  e.wait((string)"E");
 }
 
 void __stdcall E(WinSMARTS * SMARTS)
 {
-  e.send("D",NULL,false);
 
   SMARTS->contextSwitchOff();
   cout << 'E';
@@ -79,6 +78,7 @@ void __stdcall E(WinSMARTS * SMARTS)
   SMARTS->contextSwitchOff();
   cout << 'E';
   SMARTS->contextSwitchOn();
+  e.send("D",NULL,false);
 }
 /********************************************************/
 
@@ -93,8 +93,8 @@ int main()
   SMARTS.declareTask(b, "b", 5);    // declare few tasks
   SMARTS.declareTask(c, "c", 5);    //
 
-  //SMARTS.declareTask(D, "D", 5);
-  //SMARTS.declareTask(E, "E", 5);
+  SMARTS.declareTask(D, "D", 5);
+  SMARTS.declareTask(E, "E", 5);
     
   SMARTS.runTheTasks();        // start running the tasks
 
