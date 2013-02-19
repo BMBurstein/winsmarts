@@ -38,6 +38,7 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
     logger(logger),
     logCount(0)
 {
+  logger.clear();
   declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY);
 }
 

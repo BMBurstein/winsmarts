@@ -8,7 +8,7 @@ public:
   virtual ~Log() {}
 
   virtual void log(const char* msg, size_t len) {}
-  virtual void clear();
+  virtual void clear() {}
 };
 
 #endif // LOG_H
