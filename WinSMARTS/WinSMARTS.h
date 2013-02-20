@@ -3,13 +3,14 @@
 #define WINSMARTS_H
 
 #include "common.h"
-#include <string>
-#include <vector>
 #include "Task.h"
 #include "asm.h"
 #include "schedAlgo.h"
-#include <sstream>
 #include "Log.h"
+
+#include <string>
+#include <vector>
+#include <sstream>
 #include <ctime>
 #include <cstdio>
 #include <cstdarg>
@@ -44,7 +45,7 @@ private:
   friend Task;
 
 public:
-  WinSMARTS(SchedAlgo* scheduler,  Log& log, unsigned int interval = 55);
+  WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval = 55);
 
   void runTheTasks();                                                                  // Start running the tasks
   tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority);      // Add a new task to the tasks vector
@@ -104,8 +105,8 @@ inline void WinSMARTS::contextSwitchOff()
 inline void WinSMARTS::log(std::string const& evt, std::string const& msg)
 {
   contextSwitchAllow = false;
+  
   std::stringstream ss;
-
   ss << evt << ';' << logCount++ << ';' << msg;
   logger.log(ss.str().c_str(), ss.str().length());
   contextSwitchAllow = true;
@@ -120,8 +121,8 @@ inline void WinSMARTS::log(char const* evt, char const* msg, ...)
   va_end(args);
 
   contextSwitchAllow = false;
+  
   std::stringstream ss;
-
   ss << evt << ';' << logCount++ << ';' << buffer;
   logger.log(ss.str().c_str(), ss.str().length());
   contextSwitchAllow = true;

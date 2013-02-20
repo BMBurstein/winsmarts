@@ -14,5 +14,5 @@ LogFile::~LogFile(void)
 
 void LogFile::log(const char* msg, size_t len)
 {
-  logFile << msg;
+  logFile << msg << endl;
 }

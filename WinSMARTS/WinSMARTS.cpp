@@ -77,7 +77,7 @@ void WinSMARTS::runTheTasks()
 
 tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority)
 {
-  tasks.push_back(unique_ptr<Task>(new Task(fn, name, priority, ::taskEnd, this)));
+  tasks.push_back(unique_ptr<Task>(new Task(fn, tasks.size(), name, priority, ::taskEnd, this, logger, logCount)));
   currentTask = tasks.size() - 1;
 
   stringstream ss;
