@@ -48,8 +48,8 @@ void __stdcall c(WinSMARTS * SMARTS)
 
 
 /********************************************************/
-//LogUDP Lg;
-LogFile Lg("Output.txt");
+LogUDP Lg;
+//LogFile Lg("Output.txt");
 WinSMARTS SMARTS(RoundRobin, Lg, 55);
 Event e(&SMARTS);
 void __stdcall D(WinSMARTS * SMARTS)
