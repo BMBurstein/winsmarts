@@ -18,6 +18,7 @@ namespace
     unsigned int ms;                        // interval    
     void* param;                            // parameter to handler
     bool noStop;                            // used to stop timer
+    bool suspend;
   };
 
   // the timer loop
@@ -31,6 +32,10 @@ namespace
     while(tts->noStop)
     {
       Sleep(tts->ms);                              // this is the "timer"
+      if(tts->suspend)
+      {
+        continue;
+      }
       SuspendThread(tts->contextThread);           // suspend the context thread
       GetThreadContext(tts->contextThread, &ctxt); // get registers
 
@@ -72,6 +77,7 @@ timerHandle setSigTimer(unsigned int ms, TIMER_CALLBACK interruptHandlerPointer,
   tts->ms = ms; // interval  
   tts->param = param; // interrupt handler owner
   tts->noStop = true;
+  tts->suspend = false;
 
   HANDLE timerThread = CreateThread
     (
@@ -83,13 +89,23 @@ timerHandle setSigTimer(unsigned int ms, TIMER_CALLBACK interruptHandlerPointer,
       &tid // receives the thread identifier
     );
 
-  return &(tts->noStop);
+  return &tts;
 }
 
 void stopSigTimer(timerHandle &timer)
 {
-  *(bool*)timer = false;
-  timer = 0;
+  ((timerThreadStuff*)timer)->noStop = false;
+  timer = NULL;
+}
+
+void pauseSigTimer(timerHandle &timer)
+{
+  ((timerThreadStuff*)timer)->suspend = true;
+}
+
+void resumeSigTimer(timerHandle &timer)
+{
+  ((timerThreadStuff*)timer)->suspend = false;
 }
 
 #endif // _WIN32

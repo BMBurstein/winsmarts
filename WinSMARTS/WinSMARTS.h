@@ -7,6 +7,7 @@
 #include "asm.h"
 #include "schedAlgo.h"
 #include "Log.h"
+#include "timer.h"
 
 #include <string>
 #include <vector>
@@ -35,12 +36,17 @@ private:
   TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
   Log&         logger;             // Output log receiver
   int          logCount;           // Line counter for logger
+  bool         debug;
+  bool         pause;
+  timerHandle  timer;
 
   void log(std::string const& evt, std::string const& msg = "") ;  //Log function for string
   void log(char const* evt, char const* msg = "", ...);            //Log function for char*
 
   WinSMARTS(WinSMARTS const&);            //   / Not implemented. Prevents copying
   WinSMARTS& operator=(WinSMARTS const&); //   \ Copying a TaskObj is dangerous !!
+
+  void breakForDebug();
 
   friend Task;
 
@@ -49,7 +55,7 @@ public:
 
   void runTheTasks();                                                                  // Start running the tasks
   tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority);      // Add a new task to the tasks vector
-  void callScheduler() { if(!getContextSwitch()) contextSwitchOff(); timerHandler(); } // Return the control to the scheduler
+  void callScheduler() { tasks[getCurrentTask()]->switchTo(myContext); }               // Return the control to the scheduler
 
   // Task managment
   void    sleep(unsigned int ms);                                                      // Send currnet task to sleep
@@ -81,7 +87,7 @@ public:
   void restorePriority()                         { restorePriority(getCurrentTask()); }      // Restore current task's priority
 
   void setDeadlock()                             { deadlock = true; }                        // Turn on deadlock flag
-  void setCurrentTask(int tid)                   { currentTask = tid; }                      // Set tid to be run
+  void setCurrentTask(tid_t tid)                 { currentTask = tid; }                      // Set tid to be run
   void sleepDecr(tid_t tid)                      { tasks.at(tid)->sleepDecr(); }             // Decrease task's sleep time
 
   Event* getExpectedEvent(int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
@@ -91,6 +97,13 @@ public:
   void taskEnd();
   void timerHandler();
   void systemIdle();
+
+  // Debugging functions
+  void debugBegin(); // this must be called before any debug functions!
+  void debugEnd();   // call this when done debugging
+  void debugStep();
+  void debugSetCurrentTask(tid_t tid);
+  void debugSetContextSwitch(bool allow);
 };
 
 

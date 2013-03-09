@@ -1,6 +1,5 @@
 #include "WinSMARTS.h"
 #include <climits>
-#include "timer.h"
 #include "schedAlgo.h"
 #include <sstream>
 using namespace std;
@@ -36,7 +35,9 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
     ranAll(false),
     currentTask(0),
     logger(logger),
-    logCount(0)
+    logCount(0),
+    debug(false),
+    pause(false)
 {
   log("Start");
   // create a task of a waste of time when there is a sleepy task
@@ -46,7 +47,7 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
 
 void WinSMARTS::runTheTasks()
 {
-  void* timer = setSigTimer(timerInterval, ::timerHandler, this);    // generates a signal every 'timerInterval' milliseconds
+  timer = setSigTimer(timerInterval, ::timerHandler, this);    // generates a signal every 'timerInterval' milliseconds
 
   int nextTask;
   while(!ranAll)
@@ -62,6 +63,8 @@ void WinSMARTS::runTheTasks()
       setDeadlock();
       break;
     }
+
+    breakForDebug();
 
     if(tasks[getCurrentTask()]->getCS())
       contextSwitchOff();
@@ -100,9 +103,12 @@ void WinSMARTS::timerHandler()
   // Called from ::timerHandler
   log("TimerHandler");
   if(getContextSwitch())                // if Context Switch is enabled
-    tasks[(getCurrentTask())]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
+    tasks[getCurrentTask()]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
   else
+  {
     endOfTimeSlice = true; // mark exceeded of the time
+    breakForDebug();
+  }
 }
 
 void WinSMARTS::systemIdle()
@@ -150,4 +156,62 @@ WinSMARTS::TaskRef WinSMARTS::getTasksByStatus(taskStatus stat)
       TaskList.push_back(i);
 
   return TaskList;
+}
+
+inline void WinSMARTS::breakForDebug()
+{
+  if(debug)
+  {
+    pauseSigTimer(timer);
+    pause = true;
+    while(pause)
+      ;
+    resumeSigTimer(timer);
+  }
+}
+
+void WinSMARTS::debugBegin()
+{
+  if(!debug)
+  {
+    debug = true;
+    while(!pause)
+      ;
+  }
+}
+
+void WinSMARTS::debugEnd()
+{
+  if(debug)
+  {
+    debug = false;
+    pause = false;
+  }
+}
+
+void WinSMARTS::debugStep()
+{
+  if(debug)
+  {
+    pause = false;
+  }
+}
+
+void WinSMARTS::debugSetCurrentTask(tid_t tid)
+{
+  if(debug)
+  {
+    setCurrentTask(tid);
+  }
+}
+
+void WinSMARTS::debugSetContextSwitch(bool allow)
+{
+  if(debug)
+  {
+    if(allow)
+      contextSwitchOn();
+    else
+      contextSwitchOff();
+  }
 }

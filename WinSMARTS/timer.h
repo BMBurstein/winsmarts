@@ -11,5 +11,9 @@ timerHandle setSigTimer(unsigned int ms, TIMER_CALLBACK cb, void* param);
 
 //cancels the timer interrupt
 void stopSigTimer(timerHandle &timer);
+//suspends interrupts from the timer
+void pauseSigTimer(timerHandle &timer);
+//resumes interrupts from the timer
+void resumeSigTimer(timerHandle &timer);
 
 #endif // TIMER_H
