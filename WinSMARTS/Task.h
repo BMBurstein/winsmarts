@@ -2,6 +2,7 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include "common.h"
 #include "Event.h"
 #include "asm.h"
 #include "Log.h"
@@ -21,7 +22,7 @@ class WinSMARTS;
 class Task
 {
 private:
-  char         stack[65536];           // must be first to align stack
+  char         stack[65536 + STACK_ALIGN - 1];           // must be first to align stack
   TaskObj      taskPtr;                // Context of this task
   bool         CSOff;                  // true if this task disabled CS
   unsigned int priority;

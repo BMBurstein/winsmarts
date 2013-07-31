@@ -1,5 +1,6 @@
 #include "Task.h"
 #include "WinSMARTS.h"
+#include <cstdint>
 
 
 Task::Task(TaskProc fn, size_t id, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* smarts)
@@ -12,7 +13,7 @@ Task::Task(TaskProc fn, size_t id, std::string const &name_, int priority_, Task
     CSOff         (false),
     SMARTS        (smarts)
 {
-  taskPtr = newTask(fn, smarts, stack + 65536, taskEnd, smarts);    //initialize the stack of the new task and save stack pointer
+  taskPtr = newTask(fn, smarts, (char*)((uintptr_t)(stack + 65536 + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)), taskEnd, smarts);    //initialize the stack of the new task and save stack pointer
 }
 
 void Task::sleepDecr()

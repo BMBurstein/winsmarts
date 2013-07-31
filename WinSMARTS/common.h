@@ -20,4 +20,10 @@
 
 #endif
 
+#ifdef _AMD64
+#  define STACK_ALIGN 16
+#else
+#  define STACK_ALIGN 4
+#endif
+
 #endif // COMMON_H
