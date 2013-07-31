@@ -7,7 +7,7 @@ using namespace std;
 #pragma optimize("", off)
 void BusyWait(long long j)
 {
-  for(int i=0; i<j; i++);
+  for(long long i=0; i<j; i++);
 }
 #pragma optimize("", on)
 
@@ -58,19 +58,18 @@ void __stdcall D(WinSMARTS * SMARTS)
   cout << 'D';
   SMARTS->contextSwitchOn();
 
+  e.wait((string)"E");
+
   for(int i=0; i<30; ++i) BusyWait(40000000);
   //for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
 
   SMARTS->contextSwitchOff();
   cout << 'D';
   SMARTS->contextSwitchOn();
-
-  e.wait((string)"E");
 }
 
 void __stdcall E(WinSMARTS * SMARTS)
 {
-  e.send("D",NULL,false);
 
   SMARTS->contextSwitchOff();
   cout << 'E';
@@ -82,6 +81,7 @@ void __stdcall E(WinSMARTS * SMARTS)
   SMARTS->contextSwitchOff();
   cout << 'E';
   SMARTS->contextSwitchOn();
+  e.send("D",NULL,false);
 }
 /********************************************************/
 
