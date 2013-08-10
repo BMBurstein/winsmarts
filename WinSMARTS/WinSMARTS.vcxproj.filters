@@ -13,12 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Timer">
+      <UniqueIdentifier>{b6fb8bbb-d791-4c6f-ad18-1ea5278e23c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Timer">
+      <UniqueIdentifier>{45aa3e2d-dc16-4208-8219-bbf00683bebb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WinSMARTS.cpp">
@@ -39,11 +42,11 @@
     <ClCompile Include="LogFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>Source Files\Timer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WinSMARTS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,9 +54,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Task.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="asm.h">
@@ -71,6 +71,12 @@
     <ClInclude Include="LogFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>Header Files\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="x86.asm">
@@ -78,6 +84,9 @@
     </MASM>
     <MASM Include="x64.asm">
       <Filter>Source Files</Filter>
+    </MASM>
+    <MASM Include="timer_x86.asm">
+      <Filter>Source Files\Timer</Filter>
     </MASM>
   </ItemGroup>
 </Project>

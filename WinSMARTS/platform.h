@@ -1,6 +1,6 @@
 #pragma once
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef PLATFORM_H
+#define PLATFORM_H
 
 #if _M_X64
 
@@ -26,4 +26,4 @@
 #  define STACK_ALIGN 4
 #endif
 
-#endif // COMMON_H
+#endif // PLATFORM_H

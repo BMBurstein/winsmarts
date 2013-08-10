@@ -151,7 +151,7 @@
     <ClCompile Include="WinSMARTS.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.h" />
+    <ClInclude Include="platform.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Log.h" />
     <ClCompile Include="LogUDP.cpp">
@@ -166,6 +166,7 @@
     <ClInclude Include="WinSMARTS.h" />
   </ItemGroup>
   <ItemGroup>
+    <MASM Include="timer_x86.asm" />
     <MASM Include="x64.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

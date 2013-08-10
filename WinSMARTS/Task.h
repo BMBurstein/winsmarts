@@ -2,7 +2,7 @@
 #ifndef TASK_H
 #define TASK_H
 
-#include "common.h"
+#include "platform.h"
 #include "Event.h"
 #include "asm.h"
 #include "Log.h"

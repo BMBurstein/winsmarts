@@ -2,7 +2,7 @@
 #ifndef WINSMARTS_H
 #define WINSMARTS_H
 
-#include "common.h"
+#include "platform.h"
 #include "Task.h"
 #include "asm.h"
 #include "schedAlgo.h"

@@ -1,4 +1,4 @@
-#include "common.h"
+#include "platform.h"
 #include "timer.h"
 #include <Windows.h>
 
@@ -17,8 +17,8 @@ namespace
     TIMER_CALLBACK interruptHandlerPointer; // interrupt handler
     unsigned int ms;                        // interval    
     void* param;                            // parameter to handler
-    bool noStop;                            // used to stop timer
-    bool suspend;
+    volatile bool noStop;                   // used to stop timer
+    volatile bool suspend;
   };
 
   // the timer loop
@@ -47,6 +47,7 @@ namespace
       ctxt.Eip = (uintptr_t)(doTimerAsm);                                     // jump to 'doTimerAsm'
 
 #elif defined(_AMD64_) // BROKEN!
+	  BROKEN
       ctxt.Rsp -= sizeof(void*) * 3;
       ((uintptr_t *)ctxt.Rsp)[2] = (uintptr_t)ctxt.Rip;
       ((uintptr_t *)ctxt.Rsp)[1] = (uintptr_t)(tts->param);

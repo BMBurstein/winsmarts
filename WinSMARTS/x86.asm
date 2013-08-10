@@ -31,16 +31,4 @@ newTask PROC EXPORT
   mov esp, ecx       ; restore stack pointer of 'newTask' caller (=constuctor of Task)
   ret
 newTask ENDP
-
-doTimerAsm PROC EXPORT
-  pushfd        ; bacup flags register (4 Bytes)
-  pushad              ; bacup general purpose registers (8*4 Bytes)
-  mov eax, [esp+24h] ; load interrupt handler pointer
-  push [esp+28h]     ; push pointer to SMART instance again into stack head- required parameter for interrupt handler
-  call eax           ; invoke interrupt handler (with SMART instance at parameter)
-  popad              ; after return from interrupt handler, restore general purpose registers
-  popfd              ; restore flags register
-  add esp, 08h       ; pop interrupt handler pointer and the parameter
-  ret                ; resume with instruction of task which we stoped
-doTimerAsm ENDP
 end
