@@ -36,8 +36,8 @@ private:
   TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
   Log&         logger;             // Output log receiver
   int          logCount;           // Line counter for logger
-  bool         debug;
-  bool         pause;
+  volatile bool         debug;
+  volatile bool         pause;
   timerHandle  timer;
 
   void log(std::string const& evt, std::string const& msg = "") ;  //Log function for string
