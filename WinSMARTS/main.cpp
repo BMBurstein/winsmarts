@@ -4,12 +4,10 @@
 #include "WinSMARTS.h"
 using namespace std;
 
-#pragma optimize("", off)
 void BusyWait(long long j)
 {
-  for(long long i=0; i<j; i++);
+  for(volatile long long i=0; i<j; i++);
 }
-#pragma optimize("", on)
 
 void __stdcall a(WinSMARTS * SMARTS)
 {

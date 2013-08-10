@@ -3,12 +3,6 @@
 
 LogUDP::LogUDP(u_short port, char const* ip)
 {
-#ifdef _WIN32
-  WSADATA wsaData;
-  if(WSAStartup(MAKEWORD(2,2), &wsaData))
-    throw std::runtime_error("Could not init Winsock");
-#endif //_WIN32
-
   s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if(s == SOCKET_ERROR)
     throw std::runtime_error("Socket creation error");
@@ -21,9 +15,6 @@ LogUDP::LogUDP(u_short port, char const* ip)
 LogUDP::~LogUDP(void)
 {
   closesocket(s);
-#ifdef _WIN32
-  WSACleanup();
-#endif
 }
 
 void LogUDP::log(const char* msg, size_t len)

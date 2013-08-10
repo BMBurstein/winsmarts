@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="debugger.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="LogFile.cpp" />
     <ClCompile Include="main.cpp" />
@@ -149,8 +150,10 @@
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="WinSMARTS.cpp" />
+    <ClCompile Include="WinSock.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="debugger.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Log.h" />
@@ -164,9 +167,13 @@
     <ClInclude Include="Task.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="WinSMARTS.h" />
+    <ClInclude Include="WinSock.h" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="timer_x86.asm" />
+    <MASM Include="timer_x86.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </MASM>
     <MASM Include="x64.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
