@@ -3,7 +3,8 @@
 #define LOGUDP_H
 
 #include "log.h"
-#include "WinSock.h"
+#include <winsock2.h>
+#pragma comment(lib, "Ws2_32.lib")
 
 class LogUDP : public Log
 {
