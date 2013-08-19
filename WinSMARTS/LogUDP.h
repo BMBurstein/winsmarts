@@ -3,13 +3,13 @@
 #define LOGUDP_H
 
 #include "log.h"
-#include <winsock2.h>
-#pragma comment(lib, "Ws2_32.lib")
+#include "WinSock.h"
 
 class LogUDP : public Log
 {
   SOCKET s;
   SOCKADDR_IN addr;
+  WinSock winSock;
 
 public:
   LogUDP(u_short port = 44557, char const* ip = "127.0.0.1");

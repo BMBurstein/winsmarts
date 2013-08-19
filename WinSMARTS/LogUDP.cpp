@@ -24,5 +24,5 @@ void LogUDP::log(const char* msg, size_t len)
 
 void LogUDP::clear()
 {
-  log("clear", 5);
+  log("Start", 5);
 }
