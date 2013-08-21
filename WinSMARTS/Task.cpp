@@ -27,7 +27,7 @@ void Task::sleepDecr()
   }
 }
 
-char* Task::taskStatusToSting(taskStatus stat)
+char* Task::taskStatusToString(taskStatus stat)
 {
   switch (stat)
   {
@@ -48,8 +48,6 @@ char* Task::taskStatusToSting(taskStatus stat)
 void Task::setStatus(taskStatus stat)
 {
   status = stat;
-  
-  std::stringstream ss;
-  ss << id << ';'  << taskStatusToSting(stat);
-  SMARTS->log("StatusChanged", ss.str());
+
+  SMARTS->log(LOG_TASK_STATUS_CHANGE, "%d;%s", id, taskStatusToString(stat));
 }

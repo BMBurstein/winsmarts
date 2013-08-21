@@ -11,10 +11,18 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
-#include <ctime>
-#include <cstdio>
-#include <cstdarg>
+
+enum LogMsg
+{
+	LOG_START,
+	LOG_NEW_TASK,
+	LOG_CONTEXT_SWITCH,
+	LOG_CONTEXT_SWITCH_ON,
+	LOG_CONTEXT_SWITCH_OFF,
+	LOG_TIMER,
+
+	LOG_TASK_STATUS_CHANGE,
+};
 
 typedef size_t tid_t;
 
@@ -40,8 +48,8 @@ private:
   volatile bool         pause;
   timerHandle  timer;
 
-  void log(std::string const& evt, std::string const& msg = "") ;  //Log function for string
-  void log(char const* evt, char const* msg = "", ...);            //Log function for char*
+  void log(LogMsg type, std::string const& msg) ;  //Log function for string
+  void log(LogMsg type, char const* msg = "", ...);            //Log function for char*
 
   WinSMARTS(WinSMARTS const&);            //   / Not implemented. Prevents copying
   WinSMARTS& operator=(WinSMARTS const&); //   \ Copying a TaskObj is dangerous !!
@@ -105,40 +113,5 @@ public:
   void debugSetCurrentTask(tid_t tid);
   void debugSetContextSwitch(bool allow);
 };
-
-
-
-inline void WinSMARTS::contextSwitchOff()
-{
-  log("ContextSwitch - Off");
-  contextSwitchAllow = false;
-  tasks[getCurrentTask()]->setCS(true);
-}
-
-inline void WinSMARTS::log(std::string const& evt, std::string const& msg)
-{
-  contextSwitchAllow = false;
-  
-  std::stringstream ss;
-  ss << evt << ';' << logCount++ << ';' << msg;
-  logger.log(ss.str().c_str(), ss.str().length());
-  contextSwitchAllow = true;
-}
-
-inline void WinSMARTS::log(char const* evt, char const* msg, ...)
-{
-  char buffer[256];
-  std::va_list args;
-  va_start(args, msg);
-  vsnprintf(buffer, 256, msg, args);
-  va_end(args);
-
-  contextSwitchAllow = false;
-  
-  std::stringstream ss;
-  ss << evt << ';' << logCount++ << ';' << buffer;
-  logger.log(ss.str().c_str(), ss.str().length());
-  contextSwitchAllow = true;
-}
 
 #endif // WINSMARTS_H

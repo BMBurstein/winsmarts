@@ -35,7 +35,6 @@ private:
   int          logCount;               // Line counter for logger
   WinSMARTS*   SMARTS;
 
-  char* taskStatusToSting(taskStatus e);
   Task(Task const &);            //   / Not implemented. Prevents copying
   Task& operator=(Task const &); //   \ Copying a TaskObj is dangerous !!
 
@@ -64,5 +63,7 @@ public:
 
   void switchFrom(TaskObj &tsk) { contextSwitch(&tsk, taskPtr); } // contextSwitch from tsk to this task instance
   void switchTo(TaskObj tsk)    { contextSwitch(&taskPtr, tsk); } // contextSwitch from this task instance to tsk
+
+  static char* taskStatusToString(taskStatus e);
 };
 #endif // TASK_H
