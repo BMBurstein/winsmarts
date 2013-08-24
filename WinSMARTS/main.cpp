@@ -1,4 +1,5 @@
 #include <iostream>
+#include "debugger.h"
 #include "LogUDP.h"
 #include "LogFile.h"
 #include "WinSMARTS.h"
