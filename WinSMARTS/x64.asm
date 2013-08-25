@@ -49,7 +49,7 @@ contextSwitch ENDP
 newTask PROC EXPORT
 	mov rbx, rsp    ; bacup stack pointer of 'newTask' caller (=constuctor of Task)
 	mov rsp, r9  ; load stack pointer of the new Task that is created (received parameter)
-	push [rbx+28h]    ; ?? retParam
+	push QWORD PTR [rbx+28h]    ; ?? retParam
 	push rax      ; ?? dummy value - DO NOT RETURN FROM RET
 	push rdx    ; ?? fnParam
 	push r8    ; ?? ret
@@ -63,7 +63,7 @@ newTask ENDP
 doTimerAsm PROC EXPORT
 	pushM
 	mov rax, [rsp+80h]
-	push [rsp+88h]
+	push QWORD PTR [rsp+88h]
 	call rax
 	popM
 	add rsp, 10h

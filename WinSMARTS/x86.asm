@@ -20,11 +20,11 @@ contextSwitch ENDP
 newTask PROC EXPORT
 	mov ecx, esp       ; bacup stack pointer of 'newTask' caller (=constuctor of Task)
 	mov esp, [esp+0ch] ; load stack pointer of the new Task that is created (received parameter)
-	push [ecx+14h]     ; 'retParam' - parameter (pointer to SMART instance) for taskEnd function of anonymous namespace
+	push DWORD PTR [ecx+14h]     ; 'retParam' - parameter (pointer to SMART instance) for taskEnd function of anonymous namespace
 	push eax           ; DUMMY VALUE (suppose to be instruction pointer) - never return from taskEnd function
-	push [ecx+08h]     ; 'fnParam' - parameter (pointer to SMART instance) that passed to main function of the task
-	push [ecx+10h]     ; 'ret' - reutrn address from main function of the task (taskEnd of anonymous namespace)
-	push [ecx+04h]     ; 'fn' - first instruction of the task (main function)
+	push DWORD PTR [ecx+08h]     ; 'fnParam' - parameter (pointer to SMART instance) that passed to main function of the task
+	push DWORD PTR [ecx+10h]     ; 'ret' - reutrn address from main function of the task (taskEnd of anonymous namespace)
+	push DWORD PTR [ecx+04h]     ; 'fn' - first instruction of the task (main function)
 	pushfd             ; flags register - meanwhile garbage for further backup operations
 	pushad             ; general purpose registers - meanwhile garbage for further backup operations
 	mov eax, esp       ; store stack pointer of the new Task that was created as return value
