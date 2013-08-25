@@ -5,10 +5,10 @@
 class Log
 {
 public:
-  virtual ~Log() {}
+	virtual ~Log() {}
 
-  virtual void log(const char* msg, size_t len) {}
-  virtual void clear() {}
+	virtual void log(const char* msg, size_t len) {}
+	virtual void clear() {}
 };
 
 #endif // LOG_H
