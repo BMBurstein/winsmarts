@@ -181,9 +181,9 @@ void WinSMARTS::log(LogMsg evt, char const* msg, ...)
 	va_start(args, msg);
 	len = vsnprintf(buffer+5, 255, msg, args);
 	va_end(args);
-
-	memcpy(buffer, &logCount, 4);
-	buffer[4] = (char)evt;
+	
+	buffer[0] = (char)evt;
+	memcpy(buffer+1, &logCount, 4);
 
 	logger.log(buffer, len + 5);
 

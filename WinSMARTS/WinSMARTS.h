@@ -43,7 +43,7 @@ private:
 	bool         ranAll;             // flag for idle task. true if all tasks finished
 	TaskObj      myContext;          // Context of runTheTasks() (the scheduelr)
 	Log&         logger;             // Output log receiver
-	int          logCount;           // Line counter for logger
+	unsigned int logCount;           // Line counter for logger
 	volatile bool         debug;
 	volatile bool         pause;
 	timerHandle  timer;
