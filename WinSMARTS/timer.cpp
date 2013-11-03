@@ -89,7 +89,7 @@ timerHandle setSigTimer(unsigned int ms, TIMER_CALLBACK interruptHandlerPointer,
 		&tid // receives the thread identifier
 	);
 
-	return &tts;
+	return tts;
 }
 
 void stopSigTimer(timerHandle &timer)

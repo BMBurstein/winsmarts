@@ -63,7 +63,7 @@ void WinSMARTS::runTheTasks()
 
 		if(nextTask == 0 && !isTaskSleeping())
 		{
-			setDeadlock();
+			deadlock = true;
 			break;
 		}
 
@@ -77,8 +77,6 @@ void WinSMARTS::runTheTasks()
 	}
 
 	stopSigTimer(timer);
-
-
 }
 
 tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority)
@@ -148,16 +146,16 @@ bool WinSMARTS::isTaskSleeping()
 	return false;
 }
 
-WinSMARTS::TaskRef WinSMARTS::getTasksByStatus(taskStatus stat)
-{
-	TaskRef TaskList;
-
-	for(tid_t i = 0; i < tasks.size(); ++i)
-		if(tasks[i]->getStatus() == stat)
-			TaskList.push_back(i);
-
-	return TaskList;
-}
+//WinSMARTS::TaskRef WinSMARTS::getTasksByStatus(taskStatus stat)
+//{
+//	TaskRef TaskList;
+//
+//	for(tid_t i = 0; i < tasks.size(); ++i)
+//		if(tasks[i]->getStatus() == stat)
+//			TaskList.push_back(i);
+//
+//	return TaskList;
+//}
 
 inline void WinSMARTS::contextSwitchOff()
 {
@@ -207,7 +205,8 @@ void WinSMARTS::debugBegin()
 	if(!debug)
 	{
 		debug = true;
-		while(!pause)
+		pause = false;
+		while(pause)
 			;
 	}
 }
