@@ -57,10 +57,13 @@ void __stdcall D(WinSMARTS * SMARTS)
 	cout << 'D';
 	SMARTS->contextSwitchOn();
 
+
+	for(int i=0; i<30; ++i) BusyWait(4000000);
+	//for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
+
 	e.wait((string)"E");
 
-	for(int i=0; i<30; ++i) BusyWait(40000000);
-	//for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
+	for(int i=0; i<30; ++i) BusyWait(4000000);
 
 	SMARTS->contextSwitchOff();
 	cout << 'D';
@@ -91,12 +94,12 @@ int main()
 	//WinSMARTS SMARTS(RoundRobin, Lg, 55);      // instance of our system
 
 
-	SMARTS.declareTask(a, "a", 5);    //
-	SMARTS.declareTask(b, "b", 5);    // declare few tasks
+	//SMARTS.declareTask(a, "a", 5);    //
+	//SMARTS.declareTask(b, "b", 5);    // declare few tasks
 	SMARTS.declareTask(c, "c", 5);    //
 
-	SMARTS.declareTask(D, "D", 5);
-	SMARTS.declareTask(E, "E", 5);
+	//SMARTS.declareTask(D, "D", 5);
+	//SMARTS.declareTask(E, "E", 5);
 
 	SMARTS.runTheTasks();        // start running the tasks
 
