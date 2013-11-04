@@ -2,9 +2,12 @@
 #include "WinSMARTS.h"
 #include <stdexcept>
 #include <string>
+#ifdef _WIN32
+ #include <Windows.h>
+#endif
 
 Debugger::Debugger(WinSMARTS* inst, unsigned short port)
-	: SMARTS(inst), port(port)
+	: SMARTS(inst), port(port), s(INVALID_SOCKET)
 {
 }
 
@@ -15,11 +18,7 @@ Debugger::~Debugger(void)
 
 void Debugger::start()
 {
-	sockaddr_in fromAddr;
-	int fromLen = sizeof(fromAddr);
-	int len;
-	char msg[1000];
-	int ret;
+	DWORD tid;
 
 	if(s != INVALID_SOCKET)
 		return;
@@ -34,25 +33,16 @@ void Debugger::start()
 
 	bind(s, (sockaddr *) &addr, sizeof(addr));
 
-	while(true)
-	{
-		len = recvfrom(s, msg, 1000, 0, (sockaddr *)&fromAddr, &fromLen);
-		if(len == 0)
-			return;
-		if(len == SOCKET_ERROR)
-			throw std::runtime_error("Receve error: ");
-
-		switch(msg[0])
-		{
-		case PAUSE:
-			doPause();
-			break;
-		case CONTINUE:
-			doContinue();
-			break;
-		}
-	}
-	sendto(s, msg, len, 0, (sockaddr *) &addr, sizeof(addr));
+#ifdef _WIN32
+	HANDLE timerThread = CreateThread(
+		NULL, // security attributes
+		0, // stack size
+		Debugger::recvLoop, // function to be executed by the thread
+		this, // variable(s) to be passed to the thread.
+		0, // creation flags
+		&tid // receives the thread identifier
+	);
+#endif
 }
 
 void Debugger::stop()
@@ -73,4 +63,35 @@ void Debugger::doPause()
 void Debugger::doContinue()
 {
 	SMARTS->debugEnd();
+}
+
+DWORD WINAPI Debugger::recvLoop(void * param)
+{
+	sockaddr_in fromAddr;
+	int fromLen = sizeof(fromAddr);
+	int len;
+	char msg[1000];
+	char ok = '\1';
+	Debugger *p = (Debugger*)param;
+
+	while(true)
+	{
+		len = recvfrom(p->s, msg, 1000, 0, (sockaddr *)&fromAddr, &fromLen);
+		if(len == 0 || len == SOCKET_ERROR)
+			return 0;
+
+		switch(msg[0])
+		{
+		case PAUSE:
+			p->doPause();
+			break;
+		case CONTINUE:
+			p->doContinue();
+			break;
+		case STEP:
+			p->SMARTS->debugStep();
+			break;
+		}
+		sendto(p->s, &ok, 1, 0, (sockaddr *)&fromAddr, fromLen);
+	}
 }

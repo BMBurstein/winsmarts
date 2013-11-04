@@ -25,10 +25,14 @@ private:
 	WinSock winSock;
 	unsigned short port;
 
+	static DWORD WINAPI recvLoop(void *);
+
 	enum DEBUG_COMMANDS
 	{
 		PAUSE,
 		CONTINUE,
+		GET_ALL,
+		STEP,
 	};
 };
 

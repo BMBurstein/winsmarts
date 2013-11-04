@@ -88,6 +88,9 @@ int main()
 {
 	setvbuf(stdout, NULL, _IONBF, 0);  // cancel buffering on screen printing
 
+	Debugger dbg(&SMARTS);
+	dbg.start();
+
 	//WinSMARTS SMARTS(RoundRobin, Lg, 55);      // instance of our system
 
 
