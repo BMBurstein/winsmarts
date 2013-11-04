@@ -57,10 +57,13 @@ void __stdcall D(WinSMARTS * SMARTS)
 	cout << 'D';
 	SMARTS->contextSwitchOn();
 
+
+	for(int i=0; i<30; ++i) BusyWait(4000000);
+	//for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
+
 	e.wait((string)"E");
 
-	for(int i=0; i<30; ++i) BusyWait(40000000);
-	//for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
+	for(int i=0; i<30; ++i) BusyWait(4000000);
 
 	SMARTS->contextSwitchOff();
 	cout << 'D';

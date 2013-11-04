@@ -46,12 +46,11 @@ namespace
 			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)(tts->interruptHandlerPointer); // address of interrupt handler
 			ctxt.Eip = (uintptr_t)(doTimerAsm);                                     // jump to 'doTimerAsm'
 
-#elif defined(_AMD64_) // BROKEN!
-			BROKEN
-				ctxt.Rsp -= sizeof(void*) * 3;
+#elif defined(_AMD64_)
+			ctxt.Rsp -= sizeof(void*) * 3;
 			((uintptr_t *)ctxt.Rsp)[2] = (uintptr_t)ctxt.Rip;
 			((uintptr_t *)ctxt.Rsp)[1] = (uintptr_t)(tts->param);
-			((uintptr_t *)ctxt.Rsp)[0] = (uintptr_t)(tts->interuptHandlerPointer);
+			((uintptr_t *)ctxt.Rsp)[0] = (uintptr_t)(tts->interruptHandlerPointer);
 			ctxt.Rip = (uintptr_t)(doTimerAsm);
 #endif
 
