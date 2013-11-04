@@ -97,6 +97,9 @@
     <MASM Include="x64.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="timer_x64.asm">
+      <Filter>Source Files\Timer</Filter>
+    </MASM>
     <MASM Include="timer_x86.asm">
       <Filter>Source Files\Timer</Filter>
     </MASM>
