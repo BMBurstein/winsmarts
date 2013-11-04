@@ -53,13 +53,23 @@ newTask PROC EXPORT
 	mov rsp, r8               ; load stack pointer of the new Task that is created (received parameter)
 	push QWORD PTR [rbx+28h]  ; ?? retParam
 	push rax                  ; ?? dummy value - DO NOT RETURN FROM RET
-	push rdx                  ; ?? fnParam
 	push r9                   ; ?? ret
+	push rdx                  ; ?? fnParam
+
+	lea rdx, taskEndAsm
+	push rdx	
+
 	push rcx                  ; ?? fn
 	pushM
 	mov rax, rsp    ; store stack pointer of the new Task that was created as return value
 	mov rsp, rbx    ; restore stack pointer of 'newTask' caller (=constuctor of Task)
 	ret
 newTask ENDP
+
+taskEndAsm PROC EXPORT
+	add rsp, 8
+	mov rcx, [rsp+10h]
+	ret
+taskEndAsm ENDP
 
 end
