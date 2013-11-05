@@ -180,9 +180,6 @@ void WinSMARTS::log(LogMsg evt, char const* msg, ...)
 	va_start(args, msg);
 	len = vsnprintf(buffer, 255, msg, args);
 	va_end(args);
-	
-	//buffer[0] = (char)evt;
-	//memcpy(buffer+1, &logCount, 4);
 
 	logger.log(evt, buffer, len);
 
@@ -201,13 +198,14 @@ inline void WinSMARTS::breakForDebug()
 	}
 }
 
+//debugging functions. MUST BE CALLED FROM DIFFERENT THREAD!
 void WinSMARTS::debugBegin()
 {
 	if(!debug)
 	{
 		debug = true;
 		pause = false;
-		while(pause)
+		while(!pause)
 			;
 	}
 }

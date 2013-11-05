@@ -55,16 +55,6 @@ void Debugger::stop()
 	}
 }
 
-void Debugger::doPause()
-{
-	SMARTS->debugBegin();
-}
-
-void Debugger::doContinue()
-{
-	SMARTS->debugEnd();
-}
-
 DWORD WINAPI Debugger::recvLoop(void * param)
 {
 	sockaddr_in fromAddr;
@@ -83,10 +73,10 @@ DWORD WINAPI Debugger::recvLoop(void * param)
 		switch(msg[0])
 		{
 		case PAUSE:
-			p->doPause();
+			p->SMARTS->debugBegin();
 			break;
 		case CONTINUE:
-			p->doContinue();
+			p->SMARTS->debugEnd();
 			break;
 		case STEP:
 			p->SMARTS->debugStep();

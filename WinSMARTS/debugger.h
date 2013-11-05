@@ -15,9 +15,6 @@ public:
 	void start();
 	void stop();
 
-	void doPause();
-	void doContinue();
-
 private:
 	WinSMARTS* SMARTS;
 	SOCKET s;
