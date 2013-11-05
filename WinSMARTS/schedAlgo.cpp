@@ -3,6 +3,9 @@
 
 int RoundRobin(WinSMARTS* SMARTS)
 {
+	if (SMARTS->getTotalTasks() == 1)
+		return 0;
+
 	int nextTask = SMARTS->getCurrentTask() + 1;
 	if(nextTask == SMARTS->getTotalTasks())
 		nextTask = 1;

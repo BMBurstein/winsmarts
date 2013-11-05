@@ -41,16 +41,38 @@ endm
 
 
 doTimerAsm PROC EXPORT
-	pushM
-	mov rax, [rsp+80h]
-	;push QWORD PTR [rsp+88h]
-	mov rcx, [rsp+88h]
-	sub rsp,20h
-	call rax
-	add rsp,20h
-	popM
-	add rsp, 10h
-	ret
+	pushM               ; backup flags register and general purpose registers (16*8 Bytes)
+	mov rax, [rsp+80h]  ; load interrupt handler pointer
+	mov rcx, [rsp+88h]  ; push handler parameter
+
+	sub rsp, 10h
+	push r8
+	mov r8, 15
+	and r8, rsp
+	mov [rsp+8h], r8
+	mov [rsp+10h], r8
+	cmp r8, 0
+	pop r8
+	je lable1
+	add rsp,8h
+	lable1:
+
+	sub rsp,20h         ; stack preparation before calling to function
+	call rax            ; invoke interrupt handler
+	add rsp,20h         ; stack restore after calling to function
+	
+	push r8
+	mov r8, [rsp+8h]
+	cmp r8, 0
+	pop r8
+	jne lable2
+	add rsp, 8h
+	lable2:
+	add rsp, 8h
+
+	popM                ; after return from interrupt handler, restore general purpose registers and flags register
+	add rsp, 10h        ; pop interrupt handler pointer and the parameter
+	ret                 ; resume
 doTimerAsm ENDP
 
 end
