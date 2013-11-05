@@ -11,7 +11,7 @@ LogFile::~LogFile(void)
 	logFile.close();
 }
 
-void LogFile::log(const char* msg, size_t len)
+void LogFile::log(LogMsg evt, const char* msg, size_t len)
 {
 	logFile << msg << '\n';
 }

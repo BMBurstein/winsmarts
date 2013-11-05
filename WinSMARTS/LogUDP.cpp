@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 LogUDP::LogUDP(u_short port, char const* ip)
+	: count(0)
 {
 	s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if(s == SOCKET_ERROR)
@@ -18,12 +19,19 @@ LogUDP::~LogUDP(void)
 	closesocket(s);
 }
 
-void LogUDP::log(const char* msg, size_t len)
+void LogUDP::log(LogMsg evt, const char* msg, size_t len)
 {
-	sendto(s, msg, len, 0, (sockaddr *) &addr, sizeof(addr));
+	static char buff[260];
+
+	int c = htonl(++count);
+	buff[0] = (char)evt;
+	memcpy(&buff[1], &c, 4);
+	memcpy(&buff[5], msg, len);
+
+	sendto(s, buff, len + 5, 0, (sockaddr *) &addr, sizeof(addr));
 }
 
 void LogUDP::clear()
 {
-	log("", 1);
+	log(LOG_START, NULL, 0);
 }

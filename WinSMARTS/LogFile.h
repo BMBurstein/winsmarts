@@ -14,7 +14,7 @@ class LogFile : public Log
 public:
 	LogFile(char const* file);
 	virtual ~LogFile(void);
-	virtual void log(const char* msg, size_t len);
+	virtual void log(LogMsg evt, const char* msg, size_t len);
 	virtual void clear();
 };
 

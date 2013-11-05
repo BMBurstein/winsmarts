@@ -20,21 +20,6 @@
 #include <string>
 #include <vector>
 
-//! Message codes for logging
-enum LogMsg
-{
-	// WinSMARTS messages
-	LOG_START,
-	LOG_NEW_TASK,
-	LOG_CONTEXT_SWITCH,
-	LOG_CONTEXT_SWITCH_ON,
-	LOG_CONTEXT_SWITCH_OFF,
-	LOG_TIMER,
-
-	// Task messages
-	LOG_TASK_STATUS_CHANGE,
-};
-
 //! The type used for thread ids
 typedef size_t tid_t;
 
@@ -65,7 +50,6 @@ private:
 	bool          ranAll;             //!< Indicates that all tasks have completed
 	TaskObj       myContext;          //!< Context of runTheTasks() (the scheduler)
 	Log&          logger;             //!< Output log receiver
-	unsigned int  logCount;           //!< Line counter for logger
 	volatile bool debug;              //!< Signals that debugging is requested
 	volatile bool pause;              //!< Signals that the system is paused
 	timerHandle   timer;              //!< Handle to the preemptive timer

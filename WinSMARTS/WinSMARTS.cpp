@@ -38,7 +38,6 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
 	ranAll(false),
 	currentTask(0),
 	logger(logger),
-	logCount(0),
 	debug(false),
 	pause(false)
 {
@@ -77,6 +76,8 @@ void WinSMARTS::runTheTasks()
 	}
 
 	stopSigTimer(timer);
+
+	log(LOG_END, "");
 }
 
 tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority)
@@ -173,17 +174,17 @@ void WinSMARTS::log(LogMsg evt, char const* msg, ...)
 {
 	contextSwitchAllow = false;
 
-	char buffer[260];
+	char buffer[255];
 	int len;
-	std::va_list args;
+	va_list args;
 	va_start(args, msg);
-	len = vsnprintf(buffer+5, 255, msg, args);
+	len = vsnprintf(buffer, 255, msg, args);
 	va_end(args);
 	
-	buffer[0] = (char)evt;
-	memcpy(buffer+1, &logCount, 4);
+	//buffer[0] = (char)evt;
+	//memcpy(buffer+1, &logCount, 4);
 
-	logger.log(buffer, len + 5);
+	logger.log(evt, buffer, len);
 
 	contextSwitchAllow = !tasks[getCurrentTask()]->getCS();
 }
