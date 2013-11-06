@@ -36,9 +36,7 @@ typedef size_t tid_t;
 class WinSMARTS
 {
 private:
-	typedef std::vector<std::unique_ptr<Task> > Tasks;  //!< The type of the list of tasks
-	typedef Tasks::iterator TaskIt;
-	typedef std::vector<tid_t> TaskRef;
+	typedef std::vector<std::shared_ptr<Task> > Tasks;  //!< The type of the list of tasks
 
 	Tasks         tasks;              //!< The list of all tasks ever created
 	unsigned int  timerInterval;      //!< Milliseconds between timer pulses
