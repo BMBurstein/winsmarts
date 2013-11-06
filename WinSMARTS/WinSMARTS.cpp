@@ -62,6 +62,7 @@ void WinSMARTS::runTheTasks()
 
 		if(nextTask == 0 && !isTaskSleeping())
 		{
+			log(LOG_DEADLOCK, "");
 			deadlock = true;
 			break;
 		}
@@ -146,17 +147,6 @@ bool WinSMARTS::isTaskSleeping()
 			return true;
 	return false;
 }
-
-//WinSMARTS::TaskRef WinSMARTS::getTasksByStatus(taskStatus stat)
-//{
-//	TaskRef TaskList;
-//
-//	for(tid_t i = 0; i < tasks.size(); ++i)
-//		if(tasks[i]->getStatus() == stat)
-//			TaskList.push_back(i);
-//
-//	return TaskList;
-//}
 
 inline void WinSMARTS::contextSwitchOff()
 {
