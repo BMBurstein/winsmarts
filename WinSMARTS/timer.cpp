@@ -28,36 +28,37 @@ namespace
 		CONTEXT ctxt;
 
 		ctxt.ContextFlags = CONTEXT_CONTROL; // we only need the SP and IP registers
-
+		
+		Sleep(tts->ms);
 		while(tts->noStop)
 		{
-			Sleep(tts->ms);                              // this is the "timer"
-			if(tts->suspend)
+			if(!tts->suspend)
 			{
-				continue;
-			}
-			SuspendThread(tts->contextThread);           // suspend the context thread
-			GetThreadContext(tts->contextThread, &ctxt); // get registers
+				SuspendThread(tts->contextThread);           // suspend the context thread
+				GetThreadContext(tts->contextThread, &ctxt); // get registers
 
 #if defined(_X86_)
-			ctxt.Esp -= sizeof(void*) * 3;                                          // push 3 pointers
-			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)(tts->param);                   // parameter for interrupt handler
-			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->interruptHandlerPointer); // address of interrupt handler
-			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)ctxt.Eip;                       // current instruction is pushed as return address from interupt
-			ctxt.Eip = (uintptr_t)(doTimerAsm);                                     // jump to 'doTimerAsm'
+				ctxt.Esp -= sizeof(void*) * 3;                                          // push 3 pointers
+				((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)(tts->param);                   // parameter for interrupt handler
+				((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->interruptHandlerPointer); // address of interrupt handler
+				((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)ctxt.Eip;                       // current instruction is pushed as return address from interupt
+				ctxt.Eip = (uintptr_t)(doTimerAsm);                                     // jump to 'doTimerAsm'
 
 #elif defined(_AMD64_)
-			ctxt.Rsp -= sizeof(void*) * 3;
-			((uintptr_t *)ctxt.Rsp)[2] = (uintptr_t)ctxt.Rip;
-			((uintptr_t *)ctxt.Rsp)[1] = (uintptr_t)(tts->param);
-			((uintptr_t *)ctxt.Rsp)[0] = (uintptr_t)(tts->interruptHandlerPointer);
-			ctxt.Rip = (uintptr_t)(doTimerAsm);
+				ctxt.Rsp -= sizeof(void*) * 3;
+				((uintptr_t *)ctxt.Rsp)[2] = (uintptr_t)ctxt.Rip;
+				((uintptr_t *)ctxt.Rsp)[1] = (uintptr_t)(tts->param);
+				((uintptr_t *)ctxt.Rsp)[0] = (uintptr_t)(tts->interruptHandlerPointer);
+				ctxt.Rip = (uintptr_t)(doTimerAsm);
 #endif
 
-			SetThreadContext(tts->contextThread, &ctxt); // apply the changes on registers of our thread
-			ResumeThread(tts->contextThread);            // resume context thread (at 'doTimerAsm')
+				SetThreadContext(tts->contextThread, &ctxt); // apply the changes on registers of our thread
+				ResumeThread(tts->contextThread);            // resume context thread (at 'doTimerAsm')
+			}
+
+			Sleep(tts->ms);                              // this is the "timer"
 		}
-		delete tts;
+		tts->noStop = true;
 
 		return 0;
 	}
@@ -93,7 +94,11 @@ timerHandle setSigTimer(unsigned int ms, TIMER_CALLBACK interruptHandlerPointer,
 
 void stopSigTimer(timerHandle &timer)
 {
-	((timerThreadStuff*)timer)->noStop = false;
+	timerThreadStuff* tts = (timerThreadStuff*)timer;
+	tts->noStop = false;
+	while(!tts->noStop)
+		;
+	delete tts;
 	timer = NULL;
 }
 
