@@ -59,7 +59,7 @@ void __stdcall D(WinSMARTS * SMARTS)
 
 
 	for(int i=0; i<30; ++i) BusyWait(4000000);
-	//for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
+	for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
 
 	e.wait((string)"E");
 
