@@ -41,9 +41,9 @@ namespace
 
 #if defined(_X86_)
 			ctxt.Esp -= sizeof(void*) * 3;                                          // push 3 pointers
-			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)ctxt.Eip;                       // current instruction is pushed as return value from interupt
-			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->param);                   // parameter for interrupt handler
-			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)(tts->interruptHandlerPointer); // address of interrupt handler
+			((uintptr_t *)ctxt.Esp)[2] = (uintptr_t)(tts->param);                   // parameter for interrupt handler
+			((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->interruptHandlerPointer); // address of interrupt handler
+			((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)ctxt.Eip;                       // current instruction is pushed as return address from interupt
 			ctxt.Eip = (uintptr_t)(doTimerAsm);                                     // jump to 'doTimerAsm'
 
 #elif defined(_AMD64_)
