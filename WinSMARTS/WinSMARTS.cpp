@@ -107,6 +107,10 @@ void WinSMARTS::timerHandler()
 {
 	// Called from ::timerHandler
 	log(LOG_TIMER);
+
+	for(int i=0; i<tasks.size(); i++)
+		tasks[i]->sleepDecr();
+
 	if(getContextSwitch())                // if Context Switch is enabled
 		tasks[getCurrentTask()]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
 	else
