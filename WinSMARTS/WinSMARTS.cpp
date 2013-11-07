@@ -59,7 +59,7 @@ void WinSMARTS::runTheTasks()
 		log(LOG_CONTEXT_SWITCH, "%u", getCurrentTask());
 		setCurrentTask(nextTask);
 
-		if(nextTask == 0 && !isTaskSleeping())
+		if(nextTask == 0 && !isTaskSleeping() && isMoreThanOneTaskAlive())
 		{
 			log(LOG_DEADLOCK, "");
 			deadlock = true;
@@ -151,8 +151,18 @@ void WinSMARTS::sleep(unsigned int ms)
 bool WinSMARTS::isTaskSleeping()
 {
 	for(int i=0; i<tasks.size(); i++)
-		if((tasks[i])->getStatus() == SLEEPING)
+		if(tasks[i]->getStatus() == SLEEPING)
 			return true;
+	return false;
+}
+
+bool WinSMARTS::isMoreThanOneTaskAlive()
+{
+	for(int i=1; i<tasks.size(); i++)
+	{
+		if(tasks[i]->getStatus() != NOT_ACTIVE)
+			return true;
+	}
 	return false;
 }
 
