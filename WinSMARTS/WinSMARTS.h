@@ -49,7 +49,7 @@ private:
 	bool          contextSwitchAllow; //!< If false context switching is disabled
 	bool          endOfTimeSlice;     //!< Indicates a timer interrupt occured while context switch was disabled
 	bool          ranAll;             //!< Indicates that all tasks have completed
-	TaskObj       myContext;          //!< Context of runTheTasks() (the scheduler)
+	contextHnd    myContext;          //!< Context of runTheTasks() (the scheduler)
 	Log&          logger;             //!< Output log receiver
 	volatile bool debug;              //!< Signals that debugging is requested
 	volatile bool pause;              //!< Signals that the system is paused
@@ -107,7 +107,7 @@ public:
 	 */
 	tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority, size_t stackSize = DEFAULT_STACK_SIZE); // Add a new task to the tasks vector
 	/// Saves the current context and switches context back to runTheTasks()
-	void callScheduler() { tasks[getCurrentTask()]->switchTo(myContext); }               // Return the control to the scheduler
+	void callScheduler() { contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext); }               // Return the control to the scheduler
 
 	// Task managment
 	/*!

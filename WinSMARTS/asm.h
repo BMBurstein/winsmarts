@@ -6,9 +6,9 @@ class WinSMARTS;
 
 typedef void (__stdcall * TaskProc) (WinSMARTS *); // pointer to __stdcall function
 
-typedef void* TaskObj;
+typedef void* contextHnd;
 
-extern "C" { TaskObj __cdecl newTask(TaskProc fn, void* fnParam, char* stack, TaskProc ret, void* retParam); }
-extern "C" { void __cdecl contextSwitch(TaskObj* oldContext, TaskObj newContext); }
+extern "C" { contextHnd __cdecl newTask(TaskProc fn, void* fnParam, char* stack, TaskProc ret, void* retParam); }
+extern "C" { void __cdecl contextSwitch(contextHnd* oldContext, contextHnd newContext); }
 
 #endif // ASM_H

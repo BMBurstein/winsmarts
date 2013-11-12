@@ -72,7 +72,7 @@ void WinSMARTS::runTheTasks()
 			contextSwitchOff();
 		else
 			contextSwitchAllow = true;
-		tasks[getCurrentTask()]->switchFrom(myContext);    // ContextSwitch-> goes to the selectesd task 
+		contextSwitch(&myContext, tasks[getCurrentTask()]->taskPtr);    // ContextSwitch-> goes to the selectesd task 
 	}
 
 	stopSigTimer(timer);
@@ -112,7 +112,7 @@ void WinSMARTS::timerHandler()
 		tasks[i]->sleepDecr();
 
 	if(getContextSwitchAllow())                // if Context Switch is enabled
-		tasks[getCurrentTask()]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
+		contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
 	else
 	{
 		endOfTimeSlice = true; // mark exceeded of the time
