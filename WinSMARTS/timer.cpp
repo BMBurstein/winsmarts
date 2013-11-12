@@ -28,6 +28,8 @@ namespace
 		CONTEXT ctxt;
 
 		ctxt.ContextFlags = CONTEXT_CONTROL; // we only need the SP and IP registers
+
+		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 		
 		Sleep(tts->ms);
 		while(tts->noStop)
