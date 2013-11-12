@@ -22,7 +22,7 @@ class WinSMARTS;
 class Task
 {
 private:
-	char         stack[65536 + STACK_ALIGN - 1];           // must be first to align stack
+	char         *stack;
 	TaskObj      taskPtr;                // Context of this task
 	bool         CSOff;                  // true if this task disabled CS
 	unsigned int priority;
@@ -39,7 +39,8 @@ private:
 	Task& operator=(Task const &); //   \ Copying a TaskObj is dangerous !!
 
 public:
-	Task(TaskProc fn, size_t id, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*);
+	Task(TaskProc fn, size_t id, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*, size_t stackSize);
+	~Task();
 
 	void sleepDecr(); // decrease sleep counter
 	void setStatus(taskStatus stat);

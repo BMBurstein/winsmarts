@@ -20,6 +20,9 @@
 #include <string>
 #include <vector>
 
+const size_t DEFAULT_STACK_SIZE = 65500;
+const size_t MIN_STACK_SIZE     = 16300;
+
 //! The type used for thread ids
 typedef size_t tid_t;
 
@@ -102,7 +105,7 @@ public:
 	 * \param[in] name     Name of the task as will appear in the log
 	 * \param[in] priority Initial priority of this task
 	 */
-	tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority);      // Add a new task to the tasks vector
+	tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority, size_t stackSize = DEFAULT_STACK_SIZE); // Add a new task to the tasks vector
 	/// Saves the current context and switches context back to runTheTasks()
 	void callScheduler() { tasks[getCurrentTask()]->switchTo(myContext); }               // Return the control to the scheduler
 
