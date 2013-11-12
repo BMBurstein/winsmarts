@@ -2,7 +2,7 @@
 #ifndef SCHEDALGO_H
 #define SCHEDALGO_H
 
-typedef int (SchedAlgo)(WinSMARTS*);
+typedef size_t (SchedAlgo)(WinSMARTS*);
 
 SchedAlgo RoundRobin;
 

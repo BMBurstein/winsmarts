@@ -50,7 +50,7 @@ void WinSMARTS::runTheTasks()
 {
 	timer = setSigTimer(timerInterval, ::timerHandler, this);    // generates a signal every 'timerInterval' milliseconds
 
-	int nextTask;
+	size_t nextTask;
 	while(!ranAll)
 	{
 		contextSwitchAllow = false;
@@ -68,7 +68,7 @@ void WinSMARTS::runTheTasks()
 
 		breakForDebug();
 
-		if(tasks[getCurrentTask()]->getCS())
+		if(tasks[getCurrentTask()]->getCSOff())
 			contextSwitchOff();
 		else
 			contextSwitchAllow = true;
@@ -108,10 +108,10 @@ void WinSMARTS::timerHandler()
 	// Called from ::timerHandler
 	log(LOG_TIMER);
 
-	for(int i=0; i<tasks.size(); i++)
+	for(unsigned int i=0; i<tasks.size(); i++)
 		tasks[i]->sleepDecr();
 
-	if(getContextSwitch())                // if Context Switch is enabled
+	if(getContextSwitchAllow())                // if Context Switch is enabled
 		tasks[getCurrentTask()]->switchTo(myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
 	else
 	{
@@ -150,7 +150,7 @@ void WinSMARTS::sleep(unsigned int ms)
 
 bool WinSMARTS::isTaskSleeping()
 {
-	for(int i=0; i<tasks.size(); i++)
+	for(unsigned int i=0; i<tasks.size(); i++)
 		if(tasks[i]->getStatus() == SLEEPING)
 			return true;
 	return false;
@@ -158,7 +158,7 @@ bool WinSMARTS::isTaskSleeping()
 
 bool WinSMARTS::isMoreThanOneTaskAlive()
 {
-	for(int i=1; i<tasks.size(); i++)
+	for(unsigned int i=1; i<tasks.size(); i++)
 	{
 		if(tasks[i]->getStatus() != NOT_ACTIVE)
 			return true;
@@ -173,12 +173,12 @@ inline void WinSMARTS::contextSwitchOff()
 	log(LOG_CONTEXT_SWITCH_OFF);
 }
 
-void WinSMARTS::log(LogMsg evt, std::string const& msg)
+void WinSMARTS::log(LogMsg type, std::string const& msg)
 {
-	log(evt, msg.c_str());
+	log(type, msg.c_str());
 }
 
-void WinSMARTS::log(LogMsg evt, char const* msg, ...)
+void WinSMARTS::log(LogMsg type, char const* msg, ...)
 {
 	contextSwitchAllow = false;
 
@@ -189,9 +189,9 @@ void WinSMARTS::log(LogMsg evt, char const* msg, ...)
 	len = vsnprintf(buffer, 255, msg, args);
 	va_end(args);
 
-	logger.log(evt, buffer, len);
+	logger.log(type, buffer, len);
 
-	contextSwitchAllow = !tasks[getCurrentTask()]->getCS();
+	contextSwitchAllow = !tasks[getCurrentTask()]->getCSOff();
 }
 
 inline void WinSMARTS::breakForDebug()

@@ -48,7 +48,7 @@ public:
 	std::string getName()  const { return name; }
 	int getPriority()      const { return priority; }
 	taskStatus getStatus() const { return status; }
-	bool getCS()           const { return CSOff; }
+	bool getCSOff()           const { return CSOff; }
 
 	// mutators
 	void incrPriority()              { if(priority) --priority; }

@@ -19,6 +19,17 @@ void __stdcall a(WinSMARTS * SMARTS)
 		SMARTS->contextSwitchOn();
 		BusyWait(400000);
 	}
+
+	SMARTS->sleep(4000);
+
+	for(int i=0; i<50; ++i)
+	{
+		SMARTS->contextSwitchOff();
+		cout << 'a';
+		SMARTS->contextSwitchOn();
+		BusyWait(400000);
+	}
+
 }
 
 void __stdcall b(WinSMARTS * SMARTS)
@@ -59,7 +70,7 @@ void __stdcall D(WinSMARTS * SMARTS)
 
 
 	for(int i=0; i<30; ++i) BusyWait(4000000);
-	//for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
+	for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
 
 	e.wait((string)"E");
 

@@ -3,17 +3,17 @@
 #include <cstdint>
 
 
-Task::Task(TaskProc fn, size_t id, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* smarts)
-	: id             (id),
+Task::Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_)
+	: id             (id_),
 	name          (name_),
 	priority      (priority_),
 	origPriority  (priority_),
 	status        (READY),
 	expectedEvent (NULL),
 	CSOff         (false),
-	SMARTS        (smarts)
+	SMARTS        (SMARTS_)
 {
-	taskPtr = newTask(fn, smarts, (char*)((uintptr_t)(stack + 65536 + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)), taskEnd, smarts);    //initialize the stack of the new task and save stack pointer
+	taskPtr = newTask(fn, SMARTS_, (char*)((uintptr_t)(stack + 65536 + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)), taskEnd, SMARTS_);    //initialize the stack of the new task and save stack pointer
 }
 
 void Task::sleepDecr()
@@ -23,7 +23,7 @@ void Task::sleepDecr()
 		if(sleepCounter > 0)
 			--sleepCounter;
 		if(sleepCounter == 0)
-			status = READY;
+			setStatus(READY);
 	}
 }
 
@@ -41,7 +41,7 @@ char* Task::taskStatusToString(taskStatus stat)
 		return "SLEEPING";
 
 	default:
-		return "Not recognized..";
+		return "Status not recognized..";
 	}
 }
 

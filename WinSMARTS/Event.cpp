@@ -14,7 +14,7 @@ void Event::send(std::string targetName, void *param, bool synch)
 	this->source = SMARTS->getTaskName( );
 	this->data = param;
 
-	int i;
+	unsigned int i;
 	for (i=1; i < SMARTS->getTotalTasks(); i++)
 		if (SMARTS->getTaskName(i) == targetName)
 			break;
@@ -25,7 +25,7 @@ void Event::send(std::string targetName, void *param, bool synch)
 
 		if (synch)
 		{
-			senderWaitIndex = SMARTS->getCurrentTask( );
+			senderWaitIndex = (int)SMARTS->getCurrentTask( );
 			SMARTS->setTaskStatus(SUSPENDED);
 			dest = targetName;
 			SMARTS->callScheduler( );

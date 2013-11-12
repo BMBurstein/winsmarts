@@ -78,6 +78,9 @@ private:
 	/// Pauses system if debug mode was requested
 	void breakForDebug();
 
+	void setCurrentTask(tid_t tid)                 { currentTask = tid; }                      // Set tid to be run
+	void sleepDecr(tid_t tid)                      { tasks.at(tid)->sleepDecr(); }             // Decrease task's sleep time
+
 	friend Task;
 
 public:
@@ -138,7 +141,7 @@ public:
 	/// Checks if a deadlock occured
 	bool        getDeadlock()              const { return deadlock; }                          // True if in deadlock
 	/// Checks if context switch is allowed now
-	bool        getContextSwitch()         const { return contextSwitchAllow; }                // True if context switching allowed
+	bool        getContextSwitchAllow()         const { return contextSwitchAllow; }                // True if context switching allowed
 
 	// Task accessors
 	/*!
@@ -190,10 +193,8 @@ public:
 	/// Resets the priority of the current task back to it's original value
 	void restorePriority()                         { restorePriority(getCurrentTask()); }      // Restore current task's priority
 
-	void setCurrentTask(tid_t tid)                 { currentTask = tid; }                      // Set tid to be run
-	void sleepDecr(tid_t tid)                      { tasks.at(tid)->sleepDecr(); }             // Decrease task's sleep time
 
-	Event* getExpectedEvent(int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
+	Event* getExpectedEvent(unsigned int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
 	Event* getCurrentExpectedEvent() { return tasks.at(getCurrentTask())->getExpectedEvent(); }                                // Get current task's expectedEvent
 	void setCurrentExpectedEvent(Event* expectedEventp) { tasks.at(getCurrentTask())->setExpectedEvent(expectedEventp); }      // Set current task's expectedEvent
 

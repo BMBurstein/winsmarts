@@ -28,7 +28,7 @@ void LogUDP::log(LogMsg evt, const char* msg, size_t len)
 	memcpy(&buff[1], &c, 4);
 	memcpy(&buff[5], msg, len);
 
-	sendto(s, buff, len + 5, 0, (sockaddr *) &addr, sizeof(addr));
+	sendto(s, buff, (int)len + 5, 0, (sockaddr *) &addr, sizeof(addr));
 }
 
 void LogUDP::clear()
