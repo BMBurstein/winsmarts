@@ -82,11 +82,9 @@ void WinSMARTS::runTheTasks()
 
 tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority, size_t stackSize)
 {
-	bool cs = contextSwitchAllow;
-
 	contextSwitchAllow = false;
 	tasks.push_back(shared_ptr<Task>(new Task(fn, tasks.size(), name, priority, ::taskEnd, this, stackSize)));
-	contextSwitchAllow = cs;
+	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
 
 	currentTask = tasks.size() - 1;
 
@@ -150,20 +148,12 @@ void WinSMARTS::sleep(unsigned int ms)
 
 bool WinSMARTS::isTaskSleeping()
 {
-	for(unsigned int i=0; i<tasks.size(); i++)
-		if(tasks[i]->getStatus() == SLEEPING)
-			return true;
-	return false;
+	return !states[SLEEPING].empty();
 }
 
 bool WinSMARTS::isMoreThanOneTaskAlive()
 {
-	for(unsigned int i=1; i<tasks.size(); i++)
-	{
-		if(tasks[i]->getStatus() != NOT_ACTIVE)
-			return true;
-	}
-	return false;
+	return states[NOT_ACTIVE].size() != tasks.size() - 1;
 }
 
 inline void WinSMARTS::contextSwitchOff()
@@ -171,6 +161,17 @@ inline void WinSMARTS::contextSwitchOff()
 	contextSwitchAllow = false;
 	tasks[getCurrentTask()]->setCS(true);
 	log(LOG_CONTEXT_SWITCH_OFF);
+}
+
+void WinSMARTS::setTaskStatus(tid_t tid, taskStatus stat)
+{
+	taskStatus old = tasks.at(tid)->getStatus();
+
+	contextSwitchAllow = false;
+	tasks[tid]->setStatus(stat);
+	states[old].erase(tid);
+	states[stat].insert(tid);
+	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
 }
 
 void WinSMARTS::log(LogMsg type, std::string const& msg)

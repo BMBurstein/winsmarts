@@ -13,7 +13,10 @@
 #include <sstream>
 #include <cstdarg>
 
-enum taskStatus { READY, NOT_ACTIVE, SUSPENDED, SLEEPING };
+//! The type used for task ids
+typedef size_t tid_t;
+
+enum taskStatus { READY, NOT_ACTIVE, SUSPENDED, SLEEPING, NUM_OF_STATUSES };
 
 const unsigned int WINSMARTS_MAX_PRIORITY = -1;
 

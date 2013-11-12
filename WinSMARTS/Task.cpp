@@ -29,7 +29,7 @@ void Task::sleepDecr()
 		if(sleepCounter > 0)
 			--sleepCounter;
 		if(sleepCounter == 0)
-			setStatus(READY);
+			SMARTS->setTaskStatus(id, READY);
 	}
 }
 

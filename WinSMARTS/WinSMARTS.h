@@ -17,14 +17,12 @@
 #include "Log.h"
 #include "timer.h"
 
+#include <set>
 #include <string>
 #include <vector>
 
 const size_t DEFAULT_STACK_SIZE = 65500;
 const size_t MIN_STACK_SIZE     = 16300;
-
-//! The type used for thread ids
-typedef size_t tid_t;
 
 /*!
  * \class WinSMARTS
@@ -42,6 +40,7 @@ private:
 	typedef std::vector<std::shared_ptr<Task> > Tasks;  //!< The type of the list of tasks
 
 	Tasks         tasks;              //!< The list of all tasks ever created
+	std::set<tid_t> states[NUM_OF_STATUSES];
 	unsigned int  timerInterval;      //!< Milliseconds between timer pulses
 	tid_t         currentTask;        //!< Index of currently running task
 	SchedAlgo*    algo;               //!< Pointer to the scheduler function
@@ -182,7 +181,7 @@ public:
 	 * \param[in] tid  ID of task to set
 	 * \param[in] stat the new status
 	 */
-	void setTaskStatus(tid_t tid, taskStatus stat) { tasks.at(tid)->setStatus(stat); }         // Set task's status by it's tid
+	void setTaskStatus(tid_t tid, taskStatus stat); // Set task's status by it's tid
 	/*!
 	 * \brief Sets the status of the current task
 	 * \param[in] stat the new status
