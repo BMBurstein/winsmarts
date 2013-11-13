@@ -31,7 +31,7 @@ private:
 	unsigned int priority;
 	unsigned int const    origPriority;  // for reseting priority
 	taskStatus   status;
-	size_t        id;
+	tid_t        id;
 	std::string  name;
 	unsigned int sleepCounter;
 	Event*       expectedEvent;
@@ -44,7 +44,7 @@ private:
 	friend WinSMARTS;
 
 public:
-	Task(TaskProc fn, size_t id, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*, size_t stackSize);
+	Task(TaskProc fn, tid_t id, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*, size_t stackSize);
 	~Task();
 
 	void sleepDecr(); // decrease sleep counter

@@ -83,7 +83,7 @@ private:
 	void setCurrentTask(tid_t tid)                 { currentTask = tid; }                      // Set tid to be run
 	void sleepDecr(tid_t tid)                      { tasks.at(tid)->sleepDecr(); }             // Decrease task's sleep time
 
-	friend Task;
+	friend class Task;
 
 public:
 	/*!

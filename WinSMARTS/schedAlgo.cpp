@@ -6,7 +6,7 @@ size_t RoundRobin(WinSMARTS* SMARTS)
 	if (SMARTS->getTotalTasks() == 1)
 		return 0;
 
-	size_t nextTask = SMARTS->getCurrentTask() + 1;
+	tid_t nextTask = SMARTS->getCurrentTask() + 1;
 	if(nextTask == SMARTS->getTotalTasks())
 		nextTask = 1;
 

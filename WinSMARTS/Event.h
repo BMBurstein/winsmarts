@@ -1,8 +1,9 @@
-#pragma once  //??
-#ifndef EVENT_H  //??
-#define EVENT_H  //??
+#pragma once
+#ifndef EVENT_H
+#define EVENT_H
 
 #include <string>
+
 class WinSMARTS;
 
 //using namespace std;
