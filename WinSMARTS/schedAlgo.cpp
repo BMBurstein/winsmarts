@@ -1,24 +1,13 @@
 #include "WinSMARTS.h"
 
-
-size_t RoundRobin(WinSMARTS* SMARTS)
+tid_t RoundRobin(std::set<tid_t> states[NUM_OF_STATUSES], tid_t current)
 {
-	if (SMARTS->getTotalTasks() == 1)
-		return 0;
+	if (states[READY].size() <= 1)
+		return *states[READY].begin();
 
-	tid_t nextTask = SMARTS->getCurrentTask() + 1;
-	if(nextTask == SMARTS->getTotalTasks())
-		nextTask = 1;
+	std::set<tid_t>::iterator nextTask = states[READY].upper_bound(current);
+	if(nextTask == states[READY].end())
+		nextTask = ++states[READY].begin();
 
-	//passes on all the tasks array and checks if there is ready task 
-	for(size_t count=1; SMARTS->getTaskStatus(nextTask) != READY && count < SMARTS->getTotalTasks(); ++count)
-	{
-		if(++nextTask == SMARTS->getTotalTasks())
-			nextTask = 1;
-	}
-
-	//if not found any ready task, go back to "System Idle" task
-	if(SMARTS->getTaskStatus(nextTask) != READY)
-		nextTask = 0;
-	return nextTask;
+	return *nextTask;
 }

@@ -54,7 +54,7 @@ void WinSMARTS::runTheTasks()
 	while(!ranAll)
 	{
 		contextSwitchAllow = false;
-		nextTask = algo(this);                // decide which task will run now
+		nextTask = algo(states, getCurrentTask());                // decide which task will run now
 
 		log(LOG_CONTEXT_SWITCH, "%u", getCurrentTask());
 		setCurrentTask(nextTask);
@@ -84,6 +84,7 @@ tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int 
 {
 	contextSwitchAllow = false;
 	tasks.push_back(shared_ptr<Task>(new Task(fn, tasks.size(), name, priority, ::taskEnd, this, stackSize)));
+	states[READY].insert(tasks.size() - 1);
 	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
 
 	currentTask = tasks.size() - 1;
@@ -142,7 +143,7 @@ void WinSMARTS::contextSwitchOn()
 void WinSMARTS::sleep(unsigned int ms)
 {
 	tasks[getCurrentTask()]->setSleep(ms / timerInterval);
-	tasks[getCurrentTask()]->setStatus(SLEEPING);
+	setTaskStatus(SLEEPING);
 	callScheduler();
 }
 
