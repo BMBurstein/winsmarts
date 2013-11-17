@@ -1,13 +1,13 @@
-#include "CountingSemaphore.h"
+#include "countingSemaphore.h"
 
-CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_,int authorized)
+countingSemaphore::countingSemaphore(WinSMARTS* SMARTS_,int authorized)
 	: SMARTS(SMARTS_),
 	  maxAuthorized(authorized),
 	  free(authorized)
 {
 }
 
-void CountingSemaphore::acquire()
+void countingSemaphore::acquire()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();
@@ -15,19 +15,19 @@ void CountingSemaphore::acquire()
 	if (free > 0)
 	{
 		free--;
-		SMARTS->contextSwitchOn();
 	}
 	else
 	{
 		waitingList.push(SMARTS->getCurrentTask());
-		if(CS)
-			SMARTS->contextSwitchOn();
 		SMARTS->setTaskStatus(SUSPENDED);
 		SMARTS->callScheduler();
 	}
+
+	if(CS)
+		SMARTS->contextSwitchOn();
 }
 	
-void CountingSemaphore::release()
+void countingSemaphore::release()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();

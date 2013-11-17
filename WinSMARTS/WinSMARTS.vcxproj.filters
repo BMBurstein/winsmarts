@@ -57,7 +57,10 @@
     <ClCompile Include="WinSock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CountingSemaphore.cpp">
+    <ClCompile Include="countingSemaphore.cpp">
+      <Filter>Source Files\Lockers</Filter>
+    </ClCompile>
+    <ClCompile Include="mutexSemaphore.cpp">
       <Filter>Source Files\Lockers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,7 +101,10 @@
     <ClInclude Include="WinSock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CountingSemaphore.h">
+    <ClInclude Include="countingSemaphore.h">
+      <Filter>Header Files\Lockers</Filter>
+    </ClInclude>
+    <ClInclude Include="mutexSemaphore.h">
       <Filter>Header Files\Lockers</Filter>
     </ClInclude>
   </ItemGroup>

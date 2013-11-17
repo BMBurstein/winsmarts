@@ -5,16 +5,16 @@
 #include "WinSMARTS.h"
 #include <queue>          // std::queue
 
-class CountingSemaphore
+class countingSemaphore
 {
-	std::queue<tid_t> waitingList;
 	WinSMARTS* SMARTS;
+	std::queue<tid_t> waitingList;
 	int maxAuthorized;
 	int free;
 
 
 public:	
-	CountingSemaphore (WinSMARTS* SMARTS_, int authorized = 0);
+	countingSemaphore (WinSMARTS* SMARTS_, int authorized = 0);
 	void acquire();
 	void release();
 };

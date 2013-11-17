@@ -142,11 +142,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CountingSemaphore.cpp" />
+    <ClCompile Include="countingSemaphore.cpp" />
     <ClCompile Include="debugger.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="LogFile.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mutexSemaphore.cpp" />
     <ClCompile Include="schedAlgo.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="timer.cpp" />
@@ -154,8 +155,9 @@
     <ClCompile Include="WinSock.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CountingSemaphore.h" />
+    <ClInclude Include="countingSemaphore.h" />
     <ClInclude Include="debugger.h" />
+    <ClInclude Include="mutexSemaphore.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Log.h" />
