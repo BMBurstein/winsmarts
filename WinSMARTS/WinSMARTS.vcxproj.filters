@@ -19,6 +19,12 @@
     <Filter Include="Header Files\Timer">
       <UniqueIdentifier>{45aa3e2d-dc16-4208-8219-bbf00683bebb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Lockers">
+      <UniqueIdentifier>{99b2bfc6-3e25-473f-9546-b9700deb97c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lockers">
+      <UniqueIdentifier>{7a849b06-6384-44ba-bb8a-9b4aaaba0fed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="WinSock.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CountingSemaphore.cpp">
+      <Filter>Source Files\Lockers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="WinSock.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CountingSemaphore.h">
+      <Filter>Header Files\Lockers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
