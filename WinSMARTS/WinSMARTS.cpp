@@ -54,7 +54,7 @@ void WinSMARTS::runTheTasks()
 	while(!ranAll)
 	{
 		contextSwitchAllow = false;
-		nextTask = algo(states, getCurrentTask());                // decide which task will run now
+		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
 
 		log(LOG_CONTEXT_SWITCH, "%u", getCurrentTask());
 		setCurrentTask(nextTask);

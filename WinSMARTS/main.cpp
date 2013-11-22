@@ -5,6 +5,16 @@
 #include "WinSMARTS.h"
 using namespace std;
 
+
+LogUDP Lg;
+//LogFile Lg("Output.txt");
+//WinSMARTS SMARTS(RoundRobin, Lg, 55);
+WinSMARTS SMARTS(ByPriority, Lg, 55);
+Event e(&SMARTS);
+
+
+/********************************************************/
+
 void BusyWait(long long j)
 {
 	for(volatile long long i=0; i<j; i++);
@@ -54,14 +64,6 @@ void __stdcall c(WinSMARTS * SMARTS)
 	}
 }
 
-
-
-
-/********************************************************/
-LogUDP Lg;
-//LogFile Lg("Output.txt");
-WinSMARTS SMARTS(RoundRobin, Lg, 55);
-Event e(&SMARTS);
 void __stdcall D(WinSMARTS * SMARTS)
 {
 	SMARTS->contextSwitchOff();
@@ -108,12 +110,12 @@ int main()
 	//WinSMARTS SMARTS(RoundRobin, Lg, 55);      // instance of our system
 
 
-	SMARTS.declareTask(a, "a", 5);    //
-	SMARTS.declareTask(b, "b", 5);    // declare few tasks
-	SMARTS.declareTask(c, "c", 5);    //
+	SMARTS.declareTask(a, "a", 3);    //
+	SMARTS.declareTask(b, "b", 7);    // declare few tasks
+	SMARTS.declareTask(c, "c", 7);    //
 
 	SMARTS.declareTask(D, "D", 5);
-	SMARTS.declareTask(E, "E", 5);
+	SMARTS.declareTask(E, "E", 6);
 
 	SMARTS.runTheTasks();        // start running the tasks
 
