@@ -37,14 +37,24 @@ private:
 	Event*       expectedEvent;
 	int          logCount;               // Line counter for logger
 	WinSMARTS*   SMARTS;
+	
+	char*        stackBackupSource;      // stack head after creation
+	char*        stackBackupDest;        // backup stack head
+	int          stackBackupSize;        // backup stack head
+	int          cyclePeriod;            // store the original period time
+	int          leftCyclePeriod;        // store the current period time
+	int          cyclesCount;            // store the current remained cycles
+
 
 	Task(Task const &);            //   / Not implemented. Prevents copying
 	Task& operator=(Task const &); //   \ Copying a TaskObj is dangerous !!
 
 	friend WinSMARTS;
 
+
+	
 public:
-	Task(TaskProc fn, tid_t id, std::string const &name, int priority, TaskProc taskEnd, WinSMARTS*, size_t stackSize);
+	Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_, int cyclePeriod_, int cyclesCount_, size_t stackSize);
 	~Task();
 
 	void sleepDecr(); // decrease sleep counter
@@ -66,6 +76,12 @@ public:
 
 	Event* getExpectedEvent(){ return expectedEvent; }
 	void setExpectedEvent(Event* expectedEventp){ expectedEvent = expectedEventp; }
+
+	int getLeftCyclePeriod();
+	void leftCyclePeriodDecr();
+	int getcyclesCount();
+	void cyclesCountDecr();
+	void reDeclare();
 
 	static char* taskStatusToString(taskStatus e);
 };

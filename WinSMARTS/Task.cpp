@@ -3,7 +3,7 @@
 #include <cstdint>
 
 
-Task::Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_, size_t stackSize)
+Task::Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_, int cyclePeriod_, int cyclesCount_, size_t stackSize)
 	: id            (id_),
 	  name          (name_),
 	  priority      (priority_),
@@ -11,10 +11,21 @@ Task::Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, Tas
 	  status        (READY),
 	  expectedEvent (NULL),
 	  CSOff         (false),
-	  SMARTS        (SMARTS_)
+	  SMARTS        (SMARTS_),
+	  cyclePeriod	(cyclePeriod_),
+	  leftCyclePeriod(cyclePeriod_),
+	  cyclesCount	(cyclesCount_)
 {
 	stack = new char[stackSize + STACK_ALIGN - 1];
 	taskPtr = newTask(fn, SMARTS_, (char*)((uintptr_t)(stack + stackSize + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)), taskEnd, SMARTS_);    //initialize the stack of the new task and save stack pointer
+
+	stackBackupSize = (int)((char*)((uintptr_t)(stack + stackSize + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)) - (char *) taskPtr);
+	stackBackupSource = (char*)taskPtr;
+	stackBackupDest = new char[stackBackupSize];
+	for (int i=0; i<stackBackupSize; i++)
+	{
+		*(stackBackupDest + i) = *(stackBackupSource + i);
+	}
 }
 
 Task::~Task()
@@ -56,4 +67,47 @@ void Task::setStatus(taskStatus stat)
 	status = stat;
 
 	SMARTS->log(LOG_TASK_STATUS_CHANGE, "%d;%s", id, taskStatusToString(stat));
+}
+
+void Task::reDeclare()
+{
+	for (int i=0; i<stackBackupSize; i++)
+	{
+		*(stackBackupSource + i) = *(stackBackupDest + i);
+	}
+
+	taskPtr = (void*)stackBackupSource;
+	priority = origPriority;
+	//status = READY;
+	expectedEvent = NULL;
+	CSOff = false;
+	cyclesCount--;
+	leftCyclePeriod = cyclePeriod;
+	//log(redeclare);
+}
+
+int Task::getLeftCyclePeriod()
+{
+	return leftCyclePeriod;
+}
+
+void Task::leftCyclePeriodDecr()
+{
+	if (leftCyclePeriod > 0)
+	{
+		leftCyclePeriod--;
+	}
+}
+
+int Task::getcyclesCount()
+{
+	return cyclesCount;
+}
+
+void Task::cyclesCountDecr()
+{
+	if (cyclesCount > 0)
+	{
+		cyclesCount--;
+	}
 }

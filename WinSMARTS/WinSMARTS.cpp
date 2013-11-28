@@ -43,7 +43,7 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
 {
 	logger.clear();
 	// create a task of a waste of time when there is a sleepy task
-	declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY, MIN_STACK_SIZE);
+	declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY,(unsigned int)-1, 1, MIN_STACK_SIZE);
 }
 
 void WinSMARTS::runTheTasks()
@@ -80,10 +80,10 @@ void WinSMARTS::runTheTasks()
 	log(LOG_END, "");
 }
 
-tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority, size_t stackSize)
+tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority, int cyclePeriod, int cyclesCount, size_t stackSize)
 {
 	contextSwitchAllow = false;
-	tasks.push_back(shared_ptr<Task>(new Task(fn, tasks.size(), name, priority, ::taskEnd, this, stackSize)));
+	tasks.push_back(shared_ptr<Task>(new Task(fn, tasks.size(), name, priority, ::taskEnd, this, cyclePeriod, cyclesCount, stackSize)));
 	states[READY].insert(tasks.size() - 1);
 	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
 
@@ -107,8 +107,28 @@ void WinSMARTS::timerHandler()
 	// Called from ::timerHandler
 	log(LOG_TIMER);
 
-	for(unsigned int i=0; i<tasks.size(); i++)
+	for(unsigned int i=1; i<tasks.size(); i++)
+	{
 		tasks[i]->sleepDecr();
+
+		if (tasks[i]->getLeftCyclePeriod() > 0)
+		{
+			tasks[i]->leftCyclePeriodDecr();
+		}
+		else
+		{
+			if (tasks[i]->getStatus() != NOT_ACTIVE)
+			{
+				/************log ( this task didn't finish its job )************/
+				setTaskStatus(i, NOT_ACTIVE);
+			}
+			else if (tasks[i]->getcyclesCount() > 0)
+			{
+				tasks[i]->reDeclare();
+				setTaskStatus(i, READY);
+			}
+		}
+	}
 
 	if(getContextSwitchAllow())                // if Context Switch is enabled
 		contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
@@ -154,6 +174,12 @@ bool WinSMARTS::isTaskSleeping()
 
 bool WinSMARTS::isMoreThanOneTaskAlive()
 {
+	for(unsigned int i=1; i<tasks.size(); i++)
+	{
+		if (tasks[i]->getcyclesCount() > 0)
+			return true;
+	}
+
 	return states[NOT_ACTIVE].size() != tasks.size() - 1;
 }
 
@@ -173,6 +199,11 @@ void WinSMARTS::setTaskStatus(tid_t tid, taskStatus stat)
 	states[old].erase(tid);
 	states[stat].insert(tid);
 	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
+}
+
+int WinSMARTS::getTaskLeftTime(int taskNum)
+{
+	return tasks[getCurrentTask()]->cyclePeriod - tasks[getCurrentTask()]->leftCyclePeriod;
 }
 
 void WinSMARTS::log(LogMsg type, std::string const& msg)

@@ -110,12 +110,19 @@ int main()
 	//WinSMARTS SMARTS(RoundRobin, Lg, 55);      // instance of our system
 
 
-	SMARTS.declareTask(a, "a", 3);    //
-	SMARTS.declareTask(b, "b", 7);    // declare few tasks
-	SMARTS.declareTask(c, "c", 7);    //
+	//SMARTS.declareTask(a, "a", 3);    //
+	//SMARTS.declareTask(b, "b", 7);    // declare few tasks
+	//SMARTS.declareTask(c, "c", 7);    //
 
-	SMARTS.declareTask(D, "D", 5);
-	SMARTS.declareTask(E, "E", 6);
+	//SMARTS.declareTask(D, "D", 5);
+	//SMARTS.declareTask(E, "E", 6);
+
+	SMARTS.declareTask(a, "a", 3, 525, 2);    //
+	SMARTS.declareTask(b, "b", 7, 80, 2);    // declare few tasks
+	SMARTS.declareTask(c, "c", 7, 20000, 1);    //
+
+	SMARTS.declareTask(D, "D", 5, 20000, 1);
+	SMARTS.declareTask(E, "E", 6, 20000, 1);
 
 	SMARTS.runTheTasks();        // start running the tasks
 
