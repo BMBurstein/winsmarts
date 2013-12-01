@@ -3,7 +3,7 @@
 #include <cstdint>
 
 
-Task::Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_, int cyclePeriod_, int cyclesCount_, size_t stackSize)
+Task::Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_, unsigned int cyclePeriod_, unsigned int cyclesCount_, size_t stackSize)
 	: id            (id_),
 	  name          (name_),
 	  priority      (priority_),
@@ -19,10 +19,10 @@ Task::Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, Tas
 	stack = new char[stackSize + STACK_ALIGN - 1];
 	taskPtr = newTask(fn, SMARTS_, (char*)((uintptr_t)(stack + stackSize + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)), taskEnd, SMARTS_);    //initialize the stack of the new task and save stack pointer
 
-	stackBackupSize = (int)((char*)((uintptr_t)(stack + stackSize + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)) - (char *) taskPtr);
+	stackBackupSize = (unsigned int)((char*)((uintptr_t)(stack + stackSize + STACK_ALIGN - 1) & ~(STACK_ALIGN - 1)) - (char *) taskPtr);
 	stackBackupSource = (char*)taskPtr;
 	stackBackupDest = new char[stackBackupSize];
-	for (int i=0; i<stackBackupSize; i++)
+	for (unsigned int i=0; i<stackBackupSize; i++)
 	{
 		*(stackBackupDest + i) = *(stackBackupSource + i);
 	}
@@ -86,7 +86,7 @@ void Task::reDeclare()
 	//log(redeclare);
 }
 
-int Task::getLeftCyclePeriod()
+unsigned int Task::getLeftCyclePeriod()
 {
 	return leftCyclePeriod;
 }
@@ -99,7 +99,7 @@ void Task::leftCyclePeriodDecr()
 	}
 }
 
-int Task::getcyclesCount()
+unsigned int Task::getcyclesCount()
 {
 	return cyclesCount;
 }

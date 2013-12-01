@@ -43,7 +43,7 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
 {
 	logger.clear();
 	// create a task of a waste of time when there is a sleepy task
-	declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY,(unsigned int)-1, 1, MIN_STACK_SIZE);
+	declareTask(::systemIdle, "System Idle", WINSMARTS_MAX_PRIORITY, WINSMARTS_MAX_PRIORITY, 1, MIN_STACK_SIZE);
 }
 
 void WinSMARTS::runTheTasks()
@@ -80,7 +80,7 @@ void WinSMARTS::runTheTasks()
 	log(LOG_END, "");
 }
 
-tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority, int cyclePeriod, int cyclesCount, size_t stackSize)
+tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int priority, unsigned int cyclePeriod, unsigned int cyclesCount, size_t stackSize)
 {
 	contextSwitchAllow = false;
 	tasks.push_back(shared_ptr<Task>(new Task(fn, tasks.size(), name, priority, ::taskEnd, this, cyclePeriod, cyclesCount, stackSize)));
@@ -201,9 +201,9 @@ void WinSMARTS::setTaskStatus(tid_t tid, taskStatus stat)
 	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
 }
 
-int WinSMARTS::getTaskLeftTime(int taskNum)
+unsigned int WinSMARTS::getTaskLeftCyclePeriod(unsigned int taskNum)
 {
-	return tasks[getCurrentTask()]->cyclePeriod - tasks[getCurrentTask()]->leftCyclePeriod;
+	return tasks[taskNum]->leftCyclePeriod;
 }
 
 void WinSMARTS::log(LogMsg type, std::string const& msg)

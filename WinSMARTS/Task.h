@@ -40,10 +40,10 @@ private:
 	
 	char*        stackBackupSource;      // stack head after creation
 	char*        stackBackupDest;        // backup stack head
-	int          stackBackupSize;        // backup stack head
-	int          cyclePeriod;            // store the original period time
-	int          leftCyclePeriod;        // store the current period time
-	int          cyclesCount;            // store the current remained cycles
+	unsigned int          stackBackupSize;        // backup stack head
+	unsigned int          cyclePeriod;            // store the original period time
+	unsigned int          leftCyclePeriod;        // store the current period time
+	unsigned int          cyclesCount;            // store the current remained cycles
 
 
 	Task(Task const &);            //   / Not implemented. Prevents copying
@@ -54,7 +54,7 @@ private:
 
 	
 public:
-	Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_, int cyclePeriod_, int cyclesCount_, size_t stackSize);
+	Task(TaskProc fn, size_t id_, std::string const &name_, int priority_, TaskProc taskEnd, WinSMARTS* SMARTS_, unsigned int cyclePeriod_, unsigned int cyclesCount_, size_t stackSize);
 	~Task();
 
 	void sleepDecr(); // decrease sleep counter
@@ -77,9 +77,9 @@ public:
 	Event* getExpectedEvent(){ return expectedEvent; }
 	void setExpectedEvent(Event* expectedEventp){ expectedEvent = expectedEventp; }
 
-	int getLeftCyclePeriod();
+	unsigned int getLeftCyclePeriod();
 	void leftCyclePeriodDecr();
-	int getcyclesCount();
+	unsigned int getcyclesCount();
 	void cyclesCountDecr();
 	void reDeclare();
 

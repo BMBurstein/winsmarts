@@ -104,7 +104,7 @@ public:
 	 * \param[in] name     Name of the task as will appear in the log
 	 * \param[in] priority Initial priority of this task
 	 */
-	tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority, int cyclePeriod, int cyclesCount, size_t stackSize = DEFAULT_STACK_SIZE); // Add a new task to the tasks vector
+	tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority, unsigned int cyclePeriod, unsigned int cyclesCount, size_t stackSize = DEFAULT_STACK_SIZE); // Add a new task to the tasks vector
 	/// Saves the current context and switches context back to runTheTasks()
 	void callScheduler() { contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext); }               // Return the control to the scheduler
 
@@ -211,7 +211,7 @@ public:
 	void debugSetCurrentTask(tid_t tid);
 	void debugSetContextSwitch(bool allow);
 
-	int getTaskLeftTime(int taskNum);
+	unsigned int getTaskLeftCyclePeriod(unsigned int taskNum);
 };
 
 #endif // WINSMARTS_H

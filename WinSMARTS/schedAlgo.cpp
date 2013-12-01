@@ -39,3 +39,23 @@ tid_t ByPriority(std::set<tid_t> states[NUM_OF_STATUSES], tid_t current, WinSMAR
 
 	return *nextTask;
 }
+
+
+
+
+tid_t EDF(std::set<tid_t> states[NUM_OF_STATUSES], tid_t current, WinSMARTS* SMARTS)
+{
+	unsigned int minLeftTime = -1;
+	tid_t minLeftTimeTask = *states[READY].begin();
+
+	for (std::set<tid_t>::iterator it = states[READY].begin(); it != states[READY].end(); it++)
+	{
+		if (SMARTS->getTaskLeftCyclePeriod(*it) < minLeftTime)
+		{
+			minLeftTime = SMARTS->getTaskLeftCyclePeriod(*it);
+			minLeftTimeTask = *it;
+		}
+	}
+
+	return minLeftTimeTask;	
+}
