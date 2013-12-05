@@ -8,7 +8,7 @@ namespace
 {
 	extern "C"
 	{
-		void doTimerAsm(); // implemented in assembly 
+		void doTimerAsm(TIMER_CALLBACK, void*); // implemented in assembly 
 	}
 
 	struct timerThreadStuff
@@ -45,7 +45,6 @@ namespace
 				((uintptr_t *)ctxt.Esp)[1] = (uintptr_t)(tts->interruptHandlerPointer); // address of interrupt handler
 				((uintptr_t *)ctxt.Esp)[0] = (uintptr_t)ctxt.Eip;                       // current instruction is pushed as return address from interupt
 				ctxt.Eip = (uintptr_t)(doTimerAsm);                                     // jump to 'doTimerAsm'
-
 #elif defined(_AMD64_)
 				ctxt.Rsp -= sizeof(void*) * 3;
 				((uintptr_t *)ctxt.Rsp)[2] = (uintptr_t)ctxt.Rip;
