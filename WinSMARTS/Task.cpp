@@ -66,7 +66,7 @@ void Task::setStatus(taskStatus stat)
 {
 	status = stat;
 
-	SMARTS->log(LOG_TASK_STATUS_CHANGE, "%d;%s", id, taskStatusToString(stat));
+	SMARTS->log(LOG_TASK_STATUS_CHANGE, "%d;%d", id, stat);
 }
 
 void Task::reDeclare()

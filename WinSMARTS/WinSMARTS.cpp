@@ -72,6 +72,8 @@ void WinSMARTS::runTheTasks()
 			contextSwitchOff();
 		else
 			contextSwitchAllow = true;
+
+		setTaskStatus(RUNNING);
 		contextSwitch(&myContext, tasks[getCurrentTask()]->taskPtr);    // ContextSwitch-> goes to the selectesd task 
 	}
 
@@ -97,8 +99,8 @@ tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int 
 void WinSMARTS::taskEnd()
 {
 	// Called from ::taskEnd
-	setTaskStatus(NOT_ACTIVE);
 	contextSwitchOn();
+	setTaskStatus(NOT_ACTIVE);
 	callScheduler();
 }
 
@@ -131,7 +133,10 @@ void WinSMARTS::timerHandler()
 	}
 
 	if(getContextSwitchAllow())                // if Context Switch is enabled
-		contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext);  // ContextSwitch-> goes to the 'runTheTasks' function
+	{
+		setTaskStatus(READY);
+		callScheduler();
+	}
 	else
 	{
 		endOfTimeSlice = true; // mark exceeded of the time
@@ -156,6 +161,7 @@ void WinSMARTS::contextSwitchOn()
 	if(endOfTimeSlice)
 	{
 		endOfTimeSlice = false;
+		setTaskStatus(READY);
 		callScheduler();
 	}
 }
