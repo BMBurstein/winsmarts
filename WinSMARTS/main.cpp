@@ -26,21 +26,10 @@ void __stdcall a(WinSMARTS * SMARTS)
 	for(int i=0; i<50; ++i)
 	{
 		SMARTS->contextSwitchOff();
-		cout << 'a';
+		cout << 'A';
 		SMARTS->contextSwitchOn();
-		BusyWait(400000);
+		BusyWait(4000000);
 	}
-
-	SMARTS->sleep(4000);
-
-	for(int i=0; i<50; ++i)
-	{
-		SMARTS->contextSwitchOff();
-		cout << 'a';
-		SMARTS->contextSwitchOn();
-		BusyWait(400000);
-	}
-
 }
 
 void __stdcall b(WinSMARTS * SMARTS)
@@ -48,9 +37,9 @@ void __stdcall b(WinSMARTS * SMARTS)
 	for(int i=0; i<50; ++i)
 	{
 		SMARTS->contextSwitchOff();
-		cout << 'b';
+		cout << 'B';
 		SMARTS->contextSwitchOn();
-		BusyWait(400000);
+		BusyWait(4000000);
 	}
 }
 
@@ -59,7 +48,7 @@ void __stdcall c(WinSMARTS * SMARTS)
 	for(int i=0; i<50; ++i)
 	{
 		SMARTS->contextSwitchOff();
-		cout << 'c';
+		cout << 'C';
 		SMARTS->contextSwitchOn();
 		BusyWait(4000000);
 	}
@@ -67,37 +56,24 @@ void __stdcall c(WinSMARTS * SMARTS)
 
 void __stdcall D(WinSMARTS * SMARTS)
 {
-	SMARTS->contextSwitchOff();
-	cout << 'D';
-	SMARTS->contextSwitchOn();
-
-
-	for(int i=0; i<30; ++i) BusyWait(4000000);
-	for(int i=0; i<30; ++i) {BusyWait(20000000); }//if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
-
-	e.wait((string)"E");
-
-	for(int i=0; i<30; ++i) BusyWait(4000000);
-
-	SMARTS->contextSwitchOff();
-	cout << 'D';
-	SMARTS->contextSwitchOn();
+	for(int i=0; i<50; ++i)
+	{
+		SMARTS->contextSwitchOff();
+		cout << 'D';
+		SMARTS->contextSwitchOn();
+		BusyWait(4000000);
+	}
 }
 
 void __stdcall E(WinSMARTS * SMARTS)
 {
-
-	SMARTS->contextSwitchOff();
-	cout << 'E';
-	SMARTS->contextSwitchOn();
-
-	for(int i=0; i<30; ++i) BusyWait(20000000);
-	for(int i=0; i<30; ++i) {BusyWait(20000000); }//if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
-
-	SMARTS->contextSwitchOff();
-	cout << 'E';
-	SMARTS->contextSwitchOn();
-	e.send("D",NULL,false);
+	for(int i=0; i<50; ++i)
+	{
+		SMARTS->contextSwitchOff();
+		cout << 'E';
+		SMARTS->contextSwitchOn();
+		BusyWait(4000000);
+	}
 }
 /********************************************************/
 
@@ -118,12 +94,11 @@ int main()
 	//SMARTS.declareTask(D, "D", 5);
 	//SMARTS.declareTask(E, "E", 6);
 
-	SMARTS.declareTask(a, "a", 3, 200000, 1);    //
-	SMARTS.declareTask(b, "b", 7, 180000, 1);    // declare few tasks
-	SMARTS.declareTask(c, "c", 7, 220000, 1);    //
-
-	SMARTS.declareTask(D, "D", 5, 200000, 1);
-	SMARTS.declareTask(E, "E", 6, 160000, 1);
+	SMARTS.declareTask(a, "A", 3, 90, 3);		//
+	SMARTS.declareTask(b, "B", 7, 170, 2);		//
+	SMARTS.declareTask(c, "C", 7, 210, 2);		// declare a few tasks
+	SMARTS.declareTask(D, "D", 5, 150, 1);		//
+	SMARTS.declareTask(E, "E", 6, 120, 2);		//
 
 	SMARTS.runTheTasks();        // start running the tasks
 
