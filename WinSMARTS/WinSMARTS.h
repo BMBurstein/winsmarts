@@ -133,7 +133,7 @@ public:
 	 * \sa Task::setSleep(), sleep()
 	 */
 	bool isTaskSleeping();
-	bool isMoreThanOneTaskAlive();
+	bool isAtLeastOneTaskAlive();
 
 	// WinSMARTS accessors
 	/// Gets task id of currently running task

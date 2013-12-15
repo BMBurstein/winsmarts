@@ -56,10 +56,10 @@ void WinSMARTS::runTheTasks()
 		contextSwitchAllow = false;
 		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
 
-		log(LOG_CONTEXT_SWITCH, "%u", getCurrentTask());
+		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 		setCurrentTask(nextTask);
 
-		if(nextTask == 0 && !isTaskSleeping() && isMoreThanOneTaskAlive())
+		if(nextTask == 0 && !isTaskSleeping() && !isAtLeastOneTaskAlive())
 		{
 			log(LOG_DEADLOCK, "");
 			deadlock = true;
@@ -125,7 +125,7 @@ void WinSMARTS::timerHandler()
 void WinSMARTS::systemIdle()
 {
 	// Called from ::systemIdle
-	while(isTaskSleeping())
+	while(isTaskSleeping() || isAtLeastOneTaskAlive())
 		;
 	ranAll = true;
 }
@@ -154,7 +154,7 @@ bool WinSMARTS::isTaskSleeping()
 	return !states[SLEEPING].empty();
 }
 
-bool WinSMARTS::isMoreThanOneTaskAlive()
+bool WinSMARTS::isAtLeastOneTaskAlive()
 {
 	return states[NOT_ACTIVE].size() != tasks.size() - 1;
 }
