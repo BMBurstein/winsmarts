@@ -100,8 +100,7 @@ void WinSMARTS::taskEnd()
 {
 	// Called from ::taskEnd
 	contextSwitchOn();
-	setTaskStatus(NOT_ACTIVE);
-	callScheduler();
+	callScheduler(NOT_ACTIVE);
 }
 
 void WinSMARTS::timerHandler()
@@ -114,7 +113,6 @@ void WinSMARTS::timerHandler()
 
 	if(getContextSwitchAllow())                // if Context Switch is enabled
 	{
-		setTaskStatus(READY);
 		callScheduler();
 	}
 	else
@@ -141,7 +139,6 @@ void WinSMARTS::contextSwitchOn()
 	if(endOfTimeSlice)
 	{
 		endOfTimeSlice = false;
-		setTaskStatus(READY);
 		callScheduler();
 	}
 }
@@ -149,8 +146,7 @@ void WinSMARTS::contextSwitchOn()
 void WinSMARTS::sleep(unsigned int ms)
 {
 	tasks[getCurrentTask()]->setSleep(ms / timerInterval);
-	setTaskStatus(SLEEPING);
-	callScheduler();
+	callScheduler(SLEEPING);
 }
 
 bool WinSMARTS::isTaskSleeping()

@@ -19,8 +19,7 @@ void countingSemaphore::acquire()
 	else
 	{
 		waitingList.push(SMARTS->getCurrentTask());
-		SMARTS->setTaskStatus(SUSPENDED);
-		SMARTS->callScheduler();
+		SMARTS->callScheduler(SUSPENDED);
 	}
 
 	if(CS)

@@ -27,8 +27,7 @@ void Event::send(std::string targetName, void *param, bool synch)
 		{
 			senderWaitIndex = (int)SMARTS->getCurrentTask( );
 			dest = targetName;
-			SMARTS->setTaskStatus(SUSPENDED);
-			SMARTS->callScheduler( );
+			SMARTS->callScheduler(SUSPENDED);
 		}
 		else
 			dest = targetName;
@@ -41,8 +40,7 @@ void *Event::wait(std::string &sourceP)
 	if (!isEventWaitForReceiver || dest!=SMARTS->getTaskName())    // if nothing received yet
 	{
 		SMARTS->setCurrentExpectedEvent(this);
-		SMARTS->setTaskStatus(SUSPENDED);
-		SMARTS->callScheduler();
+		SMARTS->callScheduler(SUSPENDED);
 	}
 
 	sourceP = source;
@@ -82,7 +80,6 @@ bool Event::testAndSet() // checked by sender, turn on the isEventWaitForReceive
 	SMARTS->contextSwitchOn( );
 	if (tmp)
 	{
-		SMARTS->setTaskStatus(READY);
 		SMARTS->callScheduler(); // giving up CPU time
 	}
 	return tmp;

@@ -106,7 +106,7 @@ public:
 	 */
 	tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority, size_t stackSize = DEFAULT_STACK_SIZE); // Add a new task to the tasks vector
 	/// Saves the current context and switches context back to runTheTasks()
-	void callScheduler() { contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext); }               // Return the control to the scheduler
+	void callScheduler(taskStatus newStat = READY) { setTaskStatus(newStat); contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext); }               // Return the control to the scheduler
 
 	// Task managment
 	/*!

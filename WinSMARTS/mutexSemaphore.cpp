@@ -18,8 +18,7 @@ void mutexSemaphore::acquire()
 	else
 	{
 		waitingList.push(SMARTS->getCurrentTask());
-		SMARTS->setTaskStatus(SUSPENDED);
-		SMARTS->callScheduler();
+		SMARTS->callScheduler(SUSPENDED);
 	}
 
 	owner = SMARTS->getCurrentTask();
