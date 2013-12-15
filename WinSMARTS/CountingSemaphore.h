@@ -11,6 +11,9 @@ class countingSemaphore
 	std::queue<tid_t> waitingList;
 	int maxAuthorized;
 	int free;
+	unsigned int semId;
+
+	static unsigned int semIdCounter;
 
 
 public:	

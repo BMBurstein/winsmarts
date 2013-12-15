@@ -20,7 +20,12 @@ typedef size_t tid_t;
 
 enum taskStatus { READY, NOT_ACTIVE, SUSPENDED, SLEEPING, RUNNING, NUM_OF_STATUSES };
 
-enum TaskProps { UNKNOWN_PROP };
+enum TaskProps {
+	UNKNOWN_PROP,
+
+	COUNTING_SEM_WAIT,
+	COUNTING_SEM_ACQ,
+};
 
 const int PROP_NO_VAL = (~((unsigned int)-1 >> 1)); // Most negative number
 
