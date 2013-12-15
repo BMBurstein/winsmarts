@@ -194,6 +194,21 @@ public:
 	void restorePriority(tid_t tid)                { tasks.at(tid)->restorePriority(); }       // Restore task's priority by tid
 	/// Resets the priority of the current task back to it's original value
 	void restorePriority()                         { restorePriority(getCurrentTask()); }      // Restore current task's priority
+	/*!
+	 * \brief Sets a property of task \a tid
+	 * \param[in] tid  ID of task to set
+	 * \param[in] prop the property to set
+	 * \param[in] val  new value of the property
+	 * \return old value of property \a prop 
+	 */
+	int setTaskProp(tid_t tid, TaskProps prop, int val) { return tasks.at(tid)->setProperty(prop, val); } // Set task's status by it's tid
+	/*!
+	 * \brief Sets a property of the current task
+	 * \param[in] prop the property to set
+	 * \param[in] val  new value of the property
+	 * \return old value of property \a prop 
+	 */
+	int setTaskProp(TaskProps prop, int val)      { return setTaskProp(getCurrentTask(), prop, val); }  // Set current task's status
 
 
 	Event* getExpectedEvent(unsigned int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index

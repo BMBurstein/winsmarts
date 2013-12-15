@@ -33,27 +33,36 @@ void Task::sleepDecr()
 	}
 }
 
-char* Task::taskStatusToString(taskStatus stat)
-{
-	switch (stat)
-	{
-	case READY:
-		return "READY";
-	case NOT_ACTIVE:
-		return "NOT_ACTIVE";
-	case SUSPENDED:
-		return "SUSPENDED";
-	case SLEEPING:
-		return "SLEEPING";
-
-	default:
-		return "Status not recognized..";
-	}
-}
-
 void Task::setStatus(taskStatus stat)
 {
 	status = stat;
 
 	SMARTS->log(LOG_TASK_STATUS_CHANGE, "%d;%d", id, stat);
+}
+
+int Task::getProperty(TaskProps prop)
+{
+	auto it = properties.find(prop);
+	if(it != properties.end())
+		return it->second;
+	else
+		return PROP_NO_VAL;
+}
+
+int Task::setProperty(TaskProps prop, int val)
+{
+	int old = PROP_NO_VAL;
+
+	auto it = properties.find(prop);
+	if(it != properties.end())
+		old = it->second;
+
+	if(val == PROP_NO_VAL)
+		properties.erase(prop);
+	else
+		properties[prop] = val;
+
+	SMARTS->log(LOG_TASK_PROP_SET, "%d;%d;%d", id, prop, val);
+
+	return old;
 }
