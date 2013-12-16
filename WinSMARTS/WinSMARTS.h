@@ -133,6 +133,7 @@ public:
 	 * \sa Task::setSleep(), sleep()
 	 */
 	bool isTaskSleeping();
+	bool isTaskSuspended();
 	bool isAtLeastOneTaskAlive();
 
 	// WinSMARTS accessors

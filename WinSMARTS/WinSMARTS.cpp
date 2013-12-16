@@ -54,17 +54,18 @@ void WinSMARTS::runTheTasks()
 	while(!ranAll)
 	{
 		contextSwitchAllow = false;
-		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
 
-		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
-		setCurrentTask(nextTask);
-
-		if(nextTask == 0 && !isTaskSleeping() && !isAtLeastOneTaskAlive())
+		if(deadlock || isTaskSuspended() && !isTaskSleeping() && !isAtLeastOneTaskAlive())
 		{
 			log(LOG_DEADLOCK, "");
 			deadlock = true;
 			break;
 		}
+
+		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
+
+		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
+		setCurrentTask(nextTask);
 
 		breakForDebug();
 
@@ -122,7 +123,6 @@ void WinSMARTS::timerHandler()
 			if (tasks[i]->getStatus() != NOT_ACTIVE)
 			{
 				/************log ( this task didn't finish its job )************/
-				setTaskStatus(i, NOT_ACTIVE);
 			}
 			else if (tasks[i]->getcyclesCount() > 1)
 			{
@@ -178,6 +178,11 @@ bool WinSMARTS::isTaskSleeping()
 	return !states[SLEEPING].empty();
 }
 
+bool WinSMARTS::isTaskSuspended()
+{
+	return !states[SUSPENDED].empty();
+}
+
 bool WinSMARTS::isAtLeastOneTaskAlive()
 {
 	for(unsigned int i=1; i<tasks.size(); i++)
@@ -186,7 +191,7 @@ bool WinSMARTS::isAtLeastOneTaskAlive()
 			return true;
 	}
 
-	return states[NOT_ACTIVE].size() != tasks.size() - 1;
+	return states[NOT_ACTIVE].size() < tasks.size() - 1 - states[SUSPENDED].size();
 }
 
 inline void WinSMARTS::contextSwitchOff()
