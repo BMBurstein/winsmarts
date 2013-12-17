@@ -3,10 +3,10 @@
 #include "Philosophe.h"
 
 Philosophe::Philosophe(int id_, MyMonitor* myMonitor_, int thinkingTime_, int eatingTime_)
-	:id(id_)
-	,myMonitor(myMonitor_)
-	,thinkingTime(thinkingTime_)
-	,eatingTime(eatingTime_)
+	:id(id_),
+	myMonitor(myMonitor_),
+	thinkingTime(thinkingTime_),
+	eatingTime(eatingTime_)
 { }
 
 void Philosophe::run(WinSMARTS* SMARTS_)
