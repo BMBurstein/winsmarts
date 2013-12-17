@@ -1,8 +1,8 @@
-#include "countingSemaphore.h"
+#include "CountingSemaphore.h"
 
-unsigned int countingSemaphore::semIdCounter = 1;
+unsigned int CountingSemaphore::semIdCounter = 1;
 
-countingSemaphore::countingSemaphore(WinSMARTS* SMARTS_,int authorized)
+CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_,int authorized)
 	: SMARTS(SMARTS_),
 	  maxAuthorized(authorized),
 	  free(authorized),
@@ -11,7 +11,7 @@ countingSemaphore::countingSemaphore(WinSMARTS* SMARTS_,int authorized)
 	semIdCounter++;
 }
 
-void countingSemaphore::acquire()
+void CountingSemaphore::acquire()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();
@@ -34,7 +34,7 @@ void countingSemaphore::acquire()
 		SMARTS->contextSwitchOn();
 }
 	
-void countingSemaphore::release()
+void CountingSemaphore::release()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();

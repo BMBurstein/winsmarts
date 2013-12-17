@@ -1,6 +1,6 @@
-#include "mutexSemaphore.h"
+#include "MutexSemaphore.h"
 
-mutexSemaphore::mutexSemaphore(WinSMARTS* SMARTS_)
+MutexSemaphore::MutexSemaphore(WinSMARTS* SMARTS_)
 	: SMARTS(SMARTS_),
 	  owner(-1),
 	  level(0),
@@ -8,7 +8,7 @@ mutexSemaphore::mutexSemaphore(WinSMARTS* SMARTS_)
 {
 }
 
-void mutexSemaphore::acquire()
+void MutexSemaphore::acquire()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();
@@ -28,7 +28,7 @@ void mutexSemaphore::acquire()
 		SMARTS->contextSwitchOn();
 }
 
-void mutexSemaphore::release()
+void MutexSemaphore::release()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();

@@ -5,7 +5,7 @@
 #include "WinSMARTS.h"
 #include <queue>          // std::queue
 
-class countingSemaphore
+class CountingSemaphore
 {
 	WinSMARTS* SMARTS;
 	std::queue<tid_t> waitingList;
@@ -17,7 +17,7 @@ class countingSemaphore
 
 
 public:	
-	countingSemaphore (WinSMARTS* SMARTS_, int authorized = 0);
+	CountingSemaphore (WinSMARTS* SMARTS_, int authorized = 0);
 	void acquire();
 	void release();
 };

@@ -5,7 +5,7 @@
 #include "WinSMARTS.h"
 #include <queue>          // std::queue
 
-class mutexSemaphore
+class MutexSemaphore
 {
 	WinSMARTS* SMARTS;
 	std::queue<tid_t> waitingList;
@@ -14,7 +14,7 @@ class mutexSemaphore
 	size_t level;
 
 public:
-	mutexSemaphore(WinSMARTS* SMARTS_);
+	MutexSemaphore(WinSMARTS* SMARTS_);
 	void acquire();
 	void release();
 };
