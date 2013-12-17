@@ -142,12 +142,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="countingSemaphore.cpp" />
+    <ClCompile Include="Condition.cpp" />
+    <ClCompile Include="CountingSemaphore.cpp" />
     <ClCompile Include="debugger.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="LogFile.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mutexSemaphore.cpp" />
+    <ClCompile Include="Monitor.cpp" />
+    <ClCompile Include="MutexSemaphore.cpp" />
+    <ClCompile Include="MyMonitor.cpp" />
+    <ClCompile Include="Philosophe.cpp" />
     <ClCompile Include="schedAlgo.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="timer.cpp" />
@@ -155,9 +159,13 @@
     <ClCompile Include="WinSock.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="countingSemaphore.h" />
+    <ClInclude Include="Condition.h" />
+    <ClInclude Include="CountingSemaphore.h" />
     <ClInclude Include="debugger.h" />
-    <ClInclude Include="mutexSemaphore.h" />
+    <ClInclude Include="Monitor.h" />
+    <ClInclude Include="MutexSemaphore.h" />
+    <ClInclude Include="MyMonitor.h" />
+    <ClInclude Include="Philosophe.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Log.h" />

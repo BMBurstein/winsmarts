@@ -4,100 +4,31 @@
 #include "LogFile.h"
 #include "WinSMARTS.h"
 using namespace std;
+#include "Philosophe.h"
 
 
 LogUDP Lg;
 //LogFile Lg("Output.txt");
-//WinSMARTS SMARTS(RoundRobin, Lg, 55);
-WinSMARTS SMARTS(ByPriority, Lg, 55);
+WinSMARTS SMARTS(RoundRobin, Lg, 55);
+//WinSMARTS SMARTS(ByPriority, Lg, 55);
 Event e(&SMARTS);
 
 
 /********************************************************/
 
-void BusyWait(long long j)
-{
-	for(volatile long long i=0; i<j; i++);
-}
+MyMonitor* monitor = new MyMonitor(5, &SMARTS);
+Philosophe p1(1, monitor, 7, 5);
+Philosophe p2(2, monitor, 15, 12);
+Philosophe p3(3, monitor, 4, 13);
+Philosophe p4(4, monitor, 9, 9);
+Philosophe p5(0, monitor, 10, 5);
 
-void __stdcall a(WinSMARTS * SMARTS)
-{
-	for(int i=0; i<50; ++i)
-	{
-		SMARTS->contextSwitchOff();
-		cout << 'a';
-		SMARTS->contextSwitchOn();
-		BusyWait(400000);
-	}
+void __stdcall runp1 (WinSMARTS *) {p1.run(&SMARTS);}
+void __stdcall runp2 (WinSMARTS *) {p2.run(&SMARTS);}
+void __stdcall runp3 (WinSMARTS *) {p3.run(&SMARTS);}
+void __stdcall runp4 (WinSMARTS *) {p4.run(&SMARTS);}
+void __stdcall runp5 (WinSMARTS *) {p5.run(&SMARTS);}
 
-	SMARTS->sleep(4000);
-
-	for(int i=0; i<50; ++i)
-	{
-		SMARTS->contextSwitchOff();
-		cout << 'a';
-		SMARTS->contextSwitchOn();
-		BusyWait(400000);
-	}
-
-}
-
-void __stdcall b(WinSMARTS * SMARTS)
-{
-	for(int i=0; i<50; ++i)
-	{
-		SMARTS->contextSwitchOff();
-		cout << 'b';
-		SMARTS->contextSwitchOn();
-		BusyWait(4000000);
-	}
-}
-
-void __stdcall c(WinSMARTS * SMARTS)
-{
-	for(int i=0; i<50; ++i)
-	{
-		SMARTS->contextSwitchOff();
-		cout << 'c';
-		SMARTS->contextSwitchOn();
-		BusyWait(40000000);
-	}
-}
-
-void __stdcall D(WinSMARTS * SMARTS)
-{
-	SMARTS->contextSwitchOff();
-	cout << 'D';
-	SMARTS->contextSwitchOn();
-
-
-	for(int i=0; i<30; ++i) BusyWait(4000000);
-	for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
-
-	e.wait((string)"E");
-
-	for(int i=0; i<30; ++i) BusyWait(4000000);
-
-	SMARTS->contextSwitchOff();
-	cout << 'D';
-	SMARTS->contextSwitchOn();
-}
-
-void __stdcall E(WinSMARTS * SMARTS)
-{
-
-	SMARTS->contextSwitchOff();
-	cout << 'E';
-	SMARTS->contextSwitchOn();
-
-	for(int i=0; i<30; ++i) BusyWait(20000000);
-	for(int i=0; i<30; ++i) {BusyWait(20000000); }//if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
-
-	SMARTS->contextSwitchOff();
-	cout << 'E';
-	SMARTS->contextSwitchOn();
-	e.send("D",NULL,false);
-}
 /********************************************************/
 
 int main()
@@ -107,15 +38,12 @@ int main()
 	Debugger dbg(&SMARTS);
 	dbg.start();
 
-	//WinSMARTS SMARTS(RoundRobin, Lg, 55);      // instance of our system
+	SMARTS.declareTask(runp1, "P1", 1);
+	SMARTS.declareTask(runp2, "P2", 2);
+	SMARTS.declareTask(runp3, "P3", 3);
+	SMARTS.declareTask(runp4, "P4", 4);
+	SMARTS.declareTask(runp5, "P5", 4);
 
-
-	SMARTS.declareTask(a, "a", 3);    //
-	SMARTS.declareTask(b, "b", 7);    // declare few tasks
-	SMARTS.declareTask(c, "c", 7);    //
-
-	SMARTS.declareTask(D, "D", 5);
-	SMARTS.declareTask(E, "E", 6);
 
 	SMARTS.runTheTasks();        // start running the tasks
 

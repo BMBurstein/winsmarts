@@ -25,6 +25,12 @@
     <Filter Include="Header Files\Lockers">
       <UniqueIdentifier>{7a849b06-6384-44ba-bb8a-9b4aaaba0fed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Targil2">
+      <UniqueIdentifier>{f3162f66-9923-4849-a5ae-54be1044426c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Targil2">
+      <UniqueIdentifier>{37a3583c-0576-4bef-a85e-5eb223cab2c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,11 +63,23 @@
     <ClCompile Include="WinSock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="countingSemaphore.cpp">
+    <ClCompile Include="CountingSemaphore.cpp">
       <Filter>Source Files\Lockers</Filter>
     </ClCompile>
-    <ClCompile Include="mutexSemaphore.cpp">
+    <ClCompile Include="MutexSemaphore.cpp">
       <Filter>Source Files\Lockers</Filter>
+    </ClCompile>
+    <ClCompile Include="Monitor.cpp">
+      <Filter>Source Files\Targil2</Filter>
+    </ClCompile>
+    <ClCompile Include="Condition.cpp">
+      <Filter>Source Files\Targil2</Filter>
+    </ClCompile>
+    <ClCompile Include="MyMonitor.cpp">
+      <Filter>Source Files\Targil2</Filter>
+    </ClCompile>
+    <ClCompile Include="Philosophe.cpp">
+      <Filter>Source Files\Targil2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,11 +119,23 @@
     <ClInclude Include="WinSock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="countingSemaphore.h">
+    <ClInclude Include="CountingSemaphore.h">
       <Filter>Header Files\Lockers</Filter>
     </ClInclude>
-    <ClInclude Include="mutexSemaphore.h">
+    <ClInclude Include="MutexSemaphore.h">
       <Filter>Header Files\Lockers</Filter>
+    </ClInclude>
+    <ClInclude Include="Monitor.h">
+      <Filter>Header Files\Targil2</Filter>
+    </ClInclude>
+    <ClInclude Include="Condition.h">
+      <Filter>Header Files\Targil2</Filter>
+    </ClInclude>
+    <ClInclude Include="Philosophe.h">
+      <Filter>Header Files\Targil2</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMonitor.h">
+      <Filter>Header Files\Targil2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,24 @@
+--- CountingSemaphore.cpp
++++ CountingSemaphore.cpp
+@@ -2,8 +2,8 @@
+ 
+-countingSemaphore::countingSemaphore(WinSMARTS* SMARTS_,int authorized)
++CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_,int authorized)
+ 	: SMARTS(SMARTS_),
+ 	  maxAuthorized(authorized),
+ 	  free(authorized)
+ {
+ }
+ 
+@@ -4,10 +4,10 @@
+ 	: SMARTS(SMARTS_),
+ 	  maxAuthorized(authorized),
+ 	  free(authorized)
+ {
+ }
+ 
+-void countingSemaphore::acquire()
++void CountingSemaphore::acquire()
+ {
+ 	bool CS = SMARTS->getContextSwitchAllow();
+ 	SMARTS->contextSwitchOff();
