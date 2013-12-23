@@ -83,7 +83,7 @@ void Task::reDeclare()
 	CSOff = false;
 	cyclesCount--;
 	leftCyclePeriod = cyclePeriod;
-	//log(redeclare);
+	SMARTS->log(LOG_REDECLARE, "%u", id);
 }
 
 unsigned int Task::getLeftCyclePeriod()

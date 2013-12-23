@@ -122,7 +122,8 @@ void WinSMARTS::timerHandler()
 		{
 			if (tasks[i]->getStatus() != NOT_ACTIVE)
 			{
-				/************log ( this task didn't finish its job )************/
+				log(LOG_TIME_OUT, "%u", i);
+				ranAll = true;
 			}
 			else if (tasks[i]->getcyclesCount() > 1)
 			{
