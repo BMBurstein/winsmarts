@@ -122,6 +122,7 @@ void WinSMARTS::timerHandler()
 	}
 }
 
+#pragma optimize( "", off )
 void WinSMARTS::systemIdle()
 {
 	// Called from ::systemIdle
@@ -129,6 +130,7 @@ void WinSMARTS::systemIdle()
 		;
 	ranAll = true;
 }
+#pragma optimize( "", on )
 
 void WinSMARTS::contextSwitchOn()
 {
