@@ -144,7 +144,7 @@ public:
 	/// Checks if a deadlock occured
 	bool        getDeadlock()              const { return deadlock; }                          // True if in deadlock
 	/// Checks if context switch is allowed now
-	bool        getContextSwitchAllow()         const { return contextSwitchAllow; }                // True if context switching allowed
+	bool        getContextSwitchAllow()    const { return contextSwitchAllow; }                // True if context switching allowed
 
 	// Task accessors
 	/*!
@@ -226,6 +226,10 @@ public:
 	void debugStep();
 	void debugSetCurrentTask(tid_t tid);
 	void debugSetContextSwitch(bool allow);
+
+	volatile tid_t debugTask; // Task to swtch to
+	volatile bool  debugCS;   // Set CS to this
+	volatile bool  debugCS_valid;
 };
 
 #endif // WINSMARTS_H
