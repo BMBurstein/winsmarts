@@ -65,7 +65,6 @@ void WinSMARTS::runTheTasks()
 		}
 
 		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
-		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 		setCurrentTask(nextTask);
 
 		breakForDebug();
@@ -74,7 +73,14 @@ void WinSMARTS::runTheTasks()
 			setCurrentTask(debugTask);
 			debugTask = NO_TASK;
 		}
-		
+
+		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
+
+		if(tasks[getCurrentTask()]->getCSOff())
+			contextSwitchOff();
+		else
+			contextSwitchAllow = true;
+
 		if(debugCS_valid)
 		{
 			debugCS_valid = false;
@@ -82,13 +88,6 @@ void WinSMARTS::runTheTasks()
 				contextSwitchAllow = true;
 			else
 				contextSwitchOff();
-		}
-		else
-		{
-			if(tasks[getCurrentTask()]->getCSOff())
-				contextSwitchOff();
-			else
-				contextSwitchAllow = true;
 		}
 
 		setTaskStatus(RUNNING);
