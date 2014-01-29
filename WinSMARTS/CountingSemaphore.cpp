@@ -1,14 +1,23 @@
 #include "CountingSemaphore.h"
+using namespace std;
 
-unsigned int CountingSemaphore::semIdCounter = 1;
+unsigned long long CountingSemaphore::semIdCounter = 1;
 
-CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_,int authorized)
+CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_, int authorized)
 	: SMARTS(SMARTS_),
 	  maxAuthorized(authorized),
 	  free(authorized),
-	  semId(semIdCounter)
+	  semName("CountingSem_" + to_string(semIdCounter))
 {
 	semIdCounter++;
+}
+
+CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_, string name, int authorized)
+	: SMARTS(SMARTS_),
+	  maxAuthorized(authorized),
+	  free(authorized),
+	  semName(name)
+{
 }
 
 void CountingSemaphore::acquire()
@@ -23,12 +32,11 @@ void CountingSemaphore::acquire()
 	else
 	{
 		waitingList.push(SMARTS->getCurrentTask());
-		SMARTS->setTaskProp(COUNTING_SEM_WAIT, semId);
+		SMARTS->log(LOG_LOCK_WAIT, "%u;%s", SMARTS->getCurrentTask(), semName);
 		SMARTS->callScheduler(SUSPENDED);
-		SMARTS->setTaskProp(COUNTING_SEM_WAIT, PROP_NO_VAL);
 	}
 
-	SMARTS->setTaskProp(COUNTING_SEM_ACQ, semId);
+	SMARTS->log(LOG_LOCK_ACQUIRE, "%u;%s", SMARTS->getCurrentTask(), semName);
 
 	if(CS)
 		SMARTS->contextSwitchOn();
@@ -38,6 +46,8 @@ void CountingSemaphore::release()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();
+
+	SMARTS->log(LOG_LOCK_RELEASE, "%u;%s", SMARTS->getCurrentTask(), semName);
 
 	if(!waitingList.empty())
 	{
@@ -49,8 +59,6 @@ void CountingSemaphore::release()
 		if (free + 1 <= maxAuthorized)
 			free++;
 	}
-
-	SMARTS->setTaskProp(COUNTING_SEM_ACQ, PROP_NO_VAL);
 
 	if(CS)
 		SMARTS->contextSwitchOn();
