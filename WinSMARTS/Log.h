@@ -20,6 +20,11 @@ enum LogMsg
 	// Task messages
 	LOG_TASK_STATUS_CHANGE,
 	LOG_TASK_PROP_SET,
+
+	// Locks meassages
+	LOG_LOCK_ACQUIRE,
+	LOG_LOCK_RELEASE,
+	LOG_LOCK_WAIT,
 };
 
 class Log

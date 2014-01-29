@@ -4,6 +4,7 @@
 
 #include "WinSMARTS.h"
 #include <queue>          // std::queue
+#include <string>
 
 class CountingSemaphore
 {
@@ -11,13 +12,13 @@ class CountingSemaphore
 	std::queue<tid_t> waitingList;
 	int maxAuthorized;
 	int free;
-	unsigned int semId;
+	std::string semName;
 
-	static unsigned int semIdCounter;
-
+	static unsigned long long semIdCounter;
 
 public:	
-	CountingSemaphore (WinSMARTS* SMARTS_, int authorized = 0);
+	CountingSemaphore (WinSMARTS* SMARTS, int authorized = 0);
+	CountingSemaphore(WinSMARTS* SMARTS, std::string name, int authorized = 0);
 	void acquire();
 	void release();
 };

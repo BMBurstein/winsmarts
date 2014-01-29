@@ -66,15 +66,15 @@ void WinSMARTS::runTheTasks()
 
 		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
 		setCurrentTask(nextTask);
+		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 
 		breakForDebug();
 		if(debugTask != NO_TASK)
 		{
 			setCurrentTask(debugTask);
+			log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 			debugTask = NO_TASK;
 		}
-
-		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 
 		if(tasks[getCurrentTask()]->getCSOff())
 			contextSwitchOff();

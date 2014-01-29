@@ -54,6 +54,7 @@ private:
 	volatile bool pause;              //!< Signals that the system is paused
 	timerHandle   timer;              //!< Handle to the preemptive timer
 
+public:
 	///@{
 	/*!
 	 * \brief Sends message to logger
@@ -72,6 +73,7 @@ private:
 	void log(LogMsg type, char const* msg = "", ...); //Log function for char*
 	///@}
 
+private:
 	/// Copy constructor private and unimplemented to prevent cloning
 	WinSMARTS(WinSMARTS const&);
 	/// Assignment operator private and unimplemented to prevent cloning

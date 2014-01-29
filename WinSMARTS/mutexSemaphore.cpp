@@ -1,10 +1,23 @@
 #include "MutexSemaphore.h"
+using namespace std;
+
+unsigned long long MutexSemaphore::semIdCounter = 1;
 
 MutexSemaphore::MutexSemaphore(WinSMARTS* SMARTS_)
 	: SMARTS(SMARTS_),
 	  owner(-1),
 	  level(0),
-	  isFree(true)
+	  isFree(true),
+	  name("MutexSem_" + to_string(semIdCounter))
+{
+}
+
+MutexSemaphore::MutexSemaphore(WinSMARTS* SMARTS_, string name)
+	: SMARTS(SMARTS_),
+	  owner(-1),
+	  level(0),
+	  isFree(true),
+	  name(name)
 {
 }
 
@@ -18,11 +31,14 @@ void MutexSemaphore::acquire()
 	else
 	{
 		waitingList.push(SMARTS->getCurrentTask());
+		SMARTS->log(LOG_LOCK_WAIT, "%u;%s", SMARTS->getCurrentTask(), name);
 		SMARTS->callScheduler(SUSPENDED);
 	}
 
 	owner = SMARTS->getCurrentTask();
 	level++;
+
+	SMARTS->log(LOG_LOCK_ACQUIRE, "%u;%s", SMARTS->getCurrentTask(), name);
 
 	if(CS)
 		SMARTS->contextSwitchOn();
@@ -32,6 +48,8 @@ void MutexSemaphore::release()
 {
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();
+
+	SMARTS->log(LOG_LOCK_RELEASE, "%u;%s", SMARTS->getCurrentTask(), name);
 
 	if (owner == SMARTS->getCurrentTask())
 	{

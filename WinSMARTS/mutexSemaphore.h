@@ -4,6 +4,7 @@
 
 #include "WinSMARTS.h"
 #include <queue>          // std::queue
+#include <string>
 
 class MutexSemaphore
 {
@@ -12,9 +13,13 @@ class MutexSemaphore
 	bool isFree;
 	tid_t owner;
 	size_t level;
+	std::string name;
+
+	static unsigned long long semIdCounter;
 
 public:
-	MutexSemaphore(WinSMARTS* SMARTS_);
+	MutexSemaphore(WinSMARTS* SMARTS);
+	MutexSemaphore(WinSMARTS* SMARTS, std::string name);
 	void acquire();
 	void release();
 };
