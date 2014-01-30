@@ -7,17 +7,18 @@ CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_, int authorized)
 	: SMARTS(SMARTS_),
 	  maxAuthorized(authorized),
 	  free(authorized),
-	  semName("CountingSem_" + to_string(semIdCounter))
+	  name("CountingSem_" + to_string(semIdCounter++))
 {
-	semIdCounter++;
+	SMARTS->log(LOG_LOCK_COUNT, "%d;%s", free, name.c_str());
 }
 
 CountingSemaphore::CountingSemaphore(WinSMARTS* SMARTS_, string name, int authorized)
 	: SMARTS(SMARTS_),
 	  maxAuthorized(authorized),
 	  free(authorized),
-	  semName(name)
+	  name(name)
 {
+	SMARTS->log(LOG_LOCK_COUNT, "%d;%s", free, name.c_str());
 }
 
 void CountingSemaphore::acquire()
@@ -32,11 +33,11 @@ void CountingSemaphore::acquire()
 	else
 	{
 		waitingList.push(SMARTS->getCurrentTask());
-		SMARTS->log(LOG_LOCK_WAIT, "%u;%s", SMARTS->getCurrentTask(), semName);
+		SMARTS->log(LOG_LOCK_WAIT, "%u;%s", SMARTS->getCurrentTask(), name.c_str());
 		SMARTS->callScheduler(SUSPENDED);
 	}
 
-	SMARTS->log(LOG_LOCK_ACQUIRE, "%u;%s", SMARTS->getCurrentTask(), semName);
+	SMARTS->log(LOG_LOCK_ACQUIRE, "%u;%d;%s", NO_TASK, free, name.c_str());
 
 	if(CS)
 		SMARTS->contextSwitchOn();
@@ -47,17 +48,17 @@ void CountingSemaphore::release()
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();
 
-	SMARTS->log(LOG_LOCK_RELEASE, "%u;%s", SMARTS->getCurrentTask(), semName);
-
 	if(!waitingList.empty())
 	{
 		SMARTS->setTaskStatus(waitingList.front(), READY);
+		SMARTS->log(LOG_LOCK_RELEASE, "%u;%d;%s", waitingList.front(), free, name.c_str());
 		waitingList.pop();
 	}
 	else
 	{
 		if (free + 1 <= maxAuthorized)
 			free++;
+		SMARTS->log(LOG_LOCK_RELEASE, "%u;%d;%s", NO_TASK, free, name.c_str());
 	}
 
 	if(CS)

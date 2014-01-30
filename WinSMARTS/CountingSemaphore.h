@@ -12,7 +12,7 @@ class CountingSemaphore
 	std::queue<tid_t> waitingList;
 	int maxAuthorized;
 	int free;
-	std::string semName;
+	std::string name;
 
 	static unsigned long long semIdCounter;
 

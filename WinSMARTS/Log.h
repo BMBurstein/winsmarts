@@ -25,6 +25,7 @@ enum LogMsg
 	LOG_LOCK_ACQUIRE,
 	LOG_LOCK_RELEASE,
 	LOG_LOCK_WAIT,
+	LOG_LOCK_COUNT,
 };
 
 class Log
