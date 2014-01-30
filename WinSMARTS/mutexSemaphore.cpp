@@ -8,8 +8,9 @@ MutexSemaphore::MutexSemaphore(WinSMARTS* SMARTS_)
 	  owner(-1),
 	  level(0),
 	  isFree(true),
-	  name("MutexSem_" + to_string(semIdCounter))
+	  name("MutexSem_" + to_string(semIdCounter++))
 {
+	SMARTS->log(LOG_LOCK_COUNT, "%d;%s", level, name.c_str());
 }
 
 MutexSemaphore::MutexSemaphore(WinSMARTS* SMARTS_, string name)
@@ -19,6 +20,7 @@ MutexSemaphore::MutexSemaphore(WinSMARTS* SMARTS_, string name)
 	  isFree(true),
 	  name(name)
 {
+	SMARTS->log(LOG_LOCK_COUNT, "%d;%s", level, name.c_str());
 }
 
 void MutexSemaphore::acquire()
@@ -31,14 +33,14 @@ void MutexSemaphore::acquire()
 	else
 	{
 		waitingList.push(SMARTS->getCurrentTask());
-		SMARTS->log(LOG_LOCK_WAIT, "%u;%s", SMARTS->getCurrentTask(), name);
+		SMARTS->log(LOG_LOCK_WAIT, "%u;%s", SMARTS->getCurrentTask(), name.c_str());
 		SMARTS->callScheduler(SUSPENDED);
 	}
 
 	owner = SMARTS->getCurrentTask();
 	level++;
 
-	SMARTS->log(LOG_LOCK_ACQUIRE, "%u;%s", SMARTS->getCurrentTask(), name);
+	SMARTS->log(LOG_LOCK_ACQUIRE, "%u;%d;%s", SMARTS->getCurrentTask(), level, name.c_str());
 
 	if(CS)
 		SMARTS->contextSwitchOn();
@@ -49,12 +51,14 @@ void MutexSemaphore::release()
 	bool CS = SMARTS->getContextSwitchAllow();
 	SMARTS->contextSwitchOff();
 
-	SMARTS->log(LOG_LOCK_RELEASE, "%u;%s", SMARTS->getCurrentTask(), name);
 
 	if (owner == SMARTS->getCurrentTask())
 	{
 		if(--level)
+		{
+			SMARTS->log(LOG_LOCK_COUNT, "%d;%s", level, name.c_str());
 			return;
+		}
 		else
 		{
 			owner = -1;
@@ -65,6 +69,7 @@ void MutexSemaphore::release()
 			}
 			else
 				isFree = true;
+			SMARTS->log(LOG_LOCK_RELEASE, "%u;%d;%s", SMARTS->getCurrentTask(), level, name.c_str());
 		}
 	}
 
