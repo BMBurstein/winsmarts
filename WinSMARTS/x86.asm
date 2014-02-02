@@ -20,9 +20,9 @@ contextSwitch ENDP
 newTask PROC EXPORT
 	mov ecx, esp       ; backup stack pointer of 'newTask' caller (=constuctor of Task)
 	mov esp, [esp+0ch] ; load stack pointer of the new Task that is created (received parameter)
-	push DWORD PTR [ecx+14h]     ; 'retParam' - parameter (pointer to SMART instance) for taskEnd function of anonymous namespace
+	push DWORD PTR [ecx+14h]     ; 'retParam' - parameter (pointer to WinSMARTS instance) for taskEnd function of anonymous namespace
 	push 0             ; DUMMY VALUE (supposed to be return-to address) - MUST NEVER return from taskEnd function
-	push DWORD PTR [ecx+08h]     ; 'fnParam' - parameter (pointer to SMART instance) that passed to main function of the task
+	push DWORD PTR [ecx+08h]     ; 'fnParam' - parameter (pointer to WinSMARTS instance) that passed to main function of the task
 	push DWORD PTR [ecx+10h]     ; 'ret' - reutrn address from main function of the task (taskEnd of anonymous namespace)
 	push DWORD PTR [ecx+04h]     ; 'fn' - first instruction of the task (main function)
 	pushfd             ; flags register - meanwhile garbage for further backup operations

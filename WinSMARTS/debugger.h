@@ -30,6 +30,8 @@ private:
 		CONTINUE,
 		GET_ALL,
 		STEP,
+		SET_TASK,
+		SET_CS,
 	};
 };
 

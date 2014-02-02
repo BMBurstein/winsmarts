@@ -43,7 +43,7 @@ endm
 doTimerAsm PROC EXPORT
 	pushM               ; backup flags register and general purpose registers (16*8 Bytes)
 	mov rax, [rsp+80h]  ; load interrupt handler pointer
-	mov rcx, [rsp+88h]  ; push handler parameter
+	mov rcx, [rsp+88h]  ; push interrupt handler parameter
 
 	sub rsp, 10h
 	push r8

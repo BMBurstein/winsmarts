@@ -39,7 +39,9 @@ WinSMARTS::WinSMARTS(SchedAlgo* scheduler, Log& logger, unsigned int interval)
 	currentTask(0),
 	logger(logger),
 	debug(false),
-	pause(false)
+	pause(false),
+	debugTask(NO_TASK),
+	debugCS_valid(false)
 {
 	logger.clear();
 	// create a task of a waste of time when there is a sleepy task
@@ -63,16 +65,30 @@ void WinSMARTS::runTheTasks()
 		}
 
 		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
-
-		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 		setCurrentTask(nextTask);
+		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 
 		breakForDebug();
+		if(debugTask != NO_TASK)
+		{
+			setCurrentTask(debugTask);
+			log(LOG_CONTEXT_SWITCH, "%u", nextTask);
+			debugTask = NO_TASK;
+		}
 
 		if(tasks[getCurrentTask()]->getCSOff())
 			contextSwitchOff();
 		else
 			contextSwitchAllow = true;
+
+		if(debugCS_valid)
+		{
+			debugCS_valid = false;
+			if(debugCS)
+				contextSwitchAllow = true;
+			else
+				contextSwitchOff();
+		}
 
 		setTaskStatus(RUNNING);
 		contextSwitch(&myContext, tasks[getCurrentTask()]->taskPtr);    // ContextSwitch-> goes to the selectesd task 
@@ -101,8 +117,7 @@ void WinSMARTS::taskEnd()
 {
 	// Called from ::taskEnd
 	contextSwitchOn();
-	setTaskStatus(NOT_ACTIVE);
-	callScheduler();
+	callScheduler(NOT_ACTIVE);
 }
 
 void WinSMARTS::timerHandler()
@@ -133,9 +148,17 @@ void WinSMARTS::timerHandler()
 		}
 	}
 
+	if(debugCS_valid)
+	{
+		debugCS_valid = false;
+		if(debugCS)
+			contextSwitchOn();
+		else
+			contextSwitchOff();
+	}
+
 	if(getContextSwitchAllow())                // if Context Switch is enabled
 	{
-		setTaskStatus(READY);
 		callScheduler();
 	}
 	else
@@ -145,6 +168,7 @@ void WinSMARTS::timerHandler()
 	}
 }
 
+#pragma optimize( "", off )
 void WinSMARTS::systemIdle()
 {
 	// Called from ::systemIdle
@@ -152,6 +176,7 @@ void WinSMARTS::systemIdle()
 		;
 	ranAll = true;
 }
+#pragma optimize( "", on )
 
 void WinSMARTS::contextSwitchOn()
 {
@@ -162,7 +187,6 @@ void WinSMARTS::contextSwitchOn()
 	if(endOfTimeSlice)
 	{
 		endOfTimeSlice = false;
-		setTaskStatus(READY);
 		callScheduler();
 	}
 }
@@ -170,8 +194,7 @@ void WinSMARTS::contextSwitchOn()
 void WinSMARTS::sleep(unsigned int ms)
 {
 	tasks[getCurrentTask()]->setSleep(ms / timerInterval);
-	setTaskStatus(SLEEPING);
-	callScheduler();
+	callScheduler(SLEEPING);
 }
 
 bool WinSMARTS::isTaskSleeping()
@@ -284,7 +307,7 @@ void WinSMARTS::debugSetCurrentTask(tid_t tid)
 {
 	if(debug)
 	{
-		setCurrentTask(tid);
+		debugTask = tid;
 	}
 }
 
@@ -292,9 +315,7 @@ void WinSMARTS::debugSetContextSwitch(bool allow)
 {
 	if(debug)
 	{
-		if(allow)
-			contextSwitchOn();
-		else
-			contextSwitchOff();
+		debugCS = allow;
+		debugCS_valid = true;
 	}
 }

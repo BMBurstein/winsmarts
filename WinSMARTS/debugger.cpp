@@ -81,6 +81,10 @@ DWORD WINAPI Debugger::recvLoop(void * param)
 		case STEP:
 			p->SMARTS->debugStep();
 			break;
+		case SET_TASK:
+			p->SMARTS->debugSetCurrentTask(*(int*)&msg[1]);
+		case SET_CS:
+			p->SMARTS->debugSetContextSwitch(msg[1]);
 		}
 		sendto(p->s, &ok, 1, 0, (sockaddr *)&fromAddr, fromLen);
 	}

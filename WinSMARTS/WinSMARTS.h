@@ -54,6 +54,7 @@ private:
 	volatile bool pause;              //!< Signals that the system is paused
 	timerHandle   timer;              //!< Handle to the preemptive timer
 
+public:
 	///@{
 	/*!
 	 * \brief Sends message to logger
@@ -72,6 +73,7 @@ private:
 	void log(LogMsg type, char const* msg = "", ...); //Log function for char*
 	///@}
 
+private:
 	/// Copy constructor private and unimplemented to prevent cloning
 	WinSMARTS(WinSMARTS const&);
 	/// Assignment operator private and unimplemented to prevent cloning
@@ -106,7 +108,7 @@ public:
 	 */
 	tid_t declareTask(TaskProc fn, std::string const &name, unsigned int priority, unsigned int cyclePeriod, unsigned int cyclesCount, size_t stackSize = DEFAULT_STACK_SIZE); // Add a new task to the tasks vector
 	/// Saves the current context and switches context back to runTheTasks()
-	void callScheduler() { contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext); }               // Return the control to the scheduler
+	void callScheduler(taskStatus newStat = READY) { setTaskStatus(newStat); contextSwitch(&tasks[getCurrentTask()]->taskPtr, myContext); }               // Return the control to the scheduler
 
 	// Task managment
 	/*!
@@ -144,7 +146,7 @@ public:
 	/// Checks if a deadlock occured
 	bool        getDeadlock()              const { return deadlock; }                          // True if in deadlock
 	/// Checks if context switch is allowed now
-	bool        getContextSwitchAllow()         const { return contextSwitchAllow; }                // True if context switching allowed
+	bool        getContextSwitchAllow()    const { return contextSwitchAllow; }                // True if context switching allowed
 
 	// Task accessors
 	/*!
@@ -195,6 +197,21 @@ public:
 	void restorePriority(tid_t tid)                { tasks.at(tid)->restorePriority(); }       // Restore task's priority by tid
 	/// Resets the priority of the current task back to it's original value
 	void restorePriority()                         { restorePriority(getCurrentTask()); }      // Restore current task's priority
+	/*!
+	 * \brief Sets a property of task \a tid
+	 * \param[in] tid  ID of task to set
+	 * \param[in] prop the property to set
+	 * \param[in] val  new value of the property
+	 * \return old value of property \a prop 
+	 */
+	int setTaskProp(tid_t tid, TaskProps prop, int val) { return tasks.at(tid)->setProperty(prop, val); } // Set task's status by it's tid
+	/*!
+	 * \brief Sets a property of the current task
+	 * \param[in] prop the property to set
+	 * \param[in] val  new value of the property
+	 * \return old value of property \a prop 
+	 */
+	int setTaskProp(TaskProps prop, int val)      { return setTaskProp(getCurrentTask(), prop, val); }  // Set current task's status
 
 
 	Event* getExpectedEvent(unsigned int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
@@ -211,6 +228,10 @@ public:
 	void debugStep();
 	void debugSetCurrentTask(tid_t tid);
 	void debugSetContextSwitch(bool allow);
+
+	volatile tid_t debugTask; // Task to swtch to
+	volatile bool  debugCS;   // Set CS to this
+	volatile bool  debugCS_valid;
 
 	unsigned int getTaskLeftCyclePeriod(unsigned int taskNum);
 };
