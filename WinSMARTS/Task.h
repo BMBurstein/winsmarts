@@ -13,22 +13,11 @@
 #include <sstream>
 #include <cstdarg>
 
-#include <map>
-
 //! The type used for task ids
 typedef size_t tid_t;
 const tid_t NO_TASK = (tid_t)-1;
 
 enum taskStatus { READY, NOT_ACTIVE, SUSPENDED, SLEEPING, RUNNING, NUM_OF_STATUSES };
-
-enum TaskProps {
-	UNKNOWN_PROP,
-
-	COUNTING_SEM_WAIT,
-	COUNTING_SEM_ACQ,
-};
-
-const int PROP_NO_VAL = (~((unsigned int)-1 >> 1)); // Most negative number
 
 const unsigned int WINSMARTS_MAX_PRIORITY = -1;
 
@@ -49,8 +38,6 @@ private:
 	Event*       expectedEvent;
 	int          logCount;               // Line counter for logger
 	WinSMARTS*   SMARTS;
-
-	std::map<TaskProps, int> properties;
 
 	Task(Task const &);            //   / Not implemented. Prevents copying
 	Task& operator=(Task const &); //   \ Copying a TaskObj is dangerous !!
@@ -80,8 +67,5 @@ public:
 
 	Event* getExpectedEvent(){ return expectedEvent; }
 	void setExpectedEvent(Event* expectedEventp){ expectedEvent = expectedEventp; }
-
-	int getProperty(TaskProps prop);
-	int setProperty(TaskProps prop, int val);
 };
 #endif // TASK_H
