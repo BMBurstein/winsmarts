@@ -5,13 +5,9 @@
 #include "WinSMARTS.h"
 using namespace std;
 
-
 LogUDP Lg;
-//LogFile Lg("Output.txt");
-//WinSMARTS SMARTS(RoundRobin, Lg, 55);
-WinSMARTS SMARTS(ByPriority, Lg, 55);
+WinSMARTS SMARTS(RoundRobin, Lg, 55);
 Event e(&SMARTS);
-
 
 /********************************************************/
 
@@ -40,10 +36,13 @@ void __stdcall a(WinSMARTS * SMARTS)
 		BusyWait(400000);
 	}
 
+	e.send("b", NULL, true);
 }
 
 void __stdcall b(WinSMARTS * SMARTS)
 {
+	string s;
+
 	for(int i=0; i<50; ++i)
 	{
 		SMARTS->contextSwitchOff();
@@ -51,6 +50,20 @@ void __stdcall b(WinSMARTS * SMARTS)
 		SMARTS->contextSwitchOn();
 		BusyWait(4000000);
 	}
+	
+	SMARTS->contextSwitchOff();
+	cout << "\n *** b finished ***\n";
+	SMARTS->contextSwitchOn();
+
+	e.wait(s);
+	SMARTS->contextSwitchOff();
+	cout << "\n *** " << s << " finished ***\n";
+	SMARTS->contextSwitchOn();
+
+	e.wait(s);
+	SMARTS->contextSwitchOff();
+	cout << "\n *** " << s << " finished ***\n";
+	SMARTS->contextSwitchOn();
 }
 
 void __stdcall c(WinSMARTS * SMARTS)
@@ -62,41 +75,8 @@ void __stdcall c(WinSMARTS * SMARTS)
 		SMARTS->contextSwitchOn();
 		BusyWait(40000000);
 	}
-}
 
-void __stdcall D(WinSMARTS * SMARTS)
-{
-	SMARTS->contextSwitchOff();
-	cout << 'D';
-	SMARTS->contextSwitchOn();
-
-
-	for(int i=0; i<30; ++i) BusyWait(4000000);
-	for(int i=0; i<30; ++i) {BusyWait(20000000); if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
-
-	e.wait((string)"E");
-
-	for(int i=0; i<30; ++i) BusyWait(4000000);
-
-	SMARTS->contextSwitchOff();
-	cout << 'D';
-	SMARTS->contextSwitchOn();
-}
-
-void __stdcall E(WinSMARTS * SMARTS)
-{
-
-	SMARTS->contextSwitchOff();
-	cout << 'E';
-	SMARTS->contextSwitchOn();
-
-	for(int i=0; i<30; ++i) BusyWait(20000000);
-	for(int i=0; i<30; ++i) {BusyWait(20000000); }//if (i==15) SMARTS->setTaskStatus(SUSPENDED);}
-
-	SMARTS->contextSwitchOff();
-	cout << 'E';
-	SMARTS->contextSwitchOn();
-	e.send("D",NULL,false);
+	e.send("b", NULL, true);
 }
 /********************************************************/
 
@@ -112,10 +92,7 @@ int main()
 
 	SMARTS.declareTask(a, "a", 3);    //
 	SMARTS.declareTask(b, "b", 7);    // declare few tasks
-	SMARTS.declareTask(c, "c", 7);    //
-
-	SMARTS.declareTask(D, "D", 5);
-	SMARTS.declareTask(E, "E", 6);
+	SMARTS.declareTask(c, "3rd task", 7);    //
 
 	SMARTS.runTheTasks();        // start running the tasks
 
