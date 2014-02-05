@@ -19,7 +19,6 @@ static const char* LogMsgName(LogMsg m)
 		case LOG_TIME_OUT:				return "LOG_TIME_OUT";
 		case LOG_REDECLARE:				return "LOG_REDECLARE";
 		case LOG_TASK_STATUS_CHANGE:	return "LOG_TASK_STATUS_CHANGE";
-		case LOG_TASK_PROP_SET:			return "LOG_TASK_PROP_SET";
 		case LOG_LOCK_ACQUIRE:			return "LOG_LOCK_ACQUIRE";
 		case LOG_LOCK_RELEASE:			return "LOG_LOCK_RELEASE";
 		case LOG_LOCK_WAIT:				return "LOG_LOCK_WAIT";
