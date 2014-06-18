@@ -63,7 +63,7 @@ public:
 	void setPriority(unsigned int p) { if(p<WINSMARTS_MAX_PRIORITY) priority=p; }
 	void restorePriority()           { priority = origPriority; }              // reset priority back to original
 	void setSleep(int t)             { sleepCounter = t; }
-	void setCS(bool cs)              { CSOff = cs; }
+	void setCSOff(bool cs)              { CSOff = cs; }
 
 	Event* getExpectedEvent(){ return expectedEvent; }
 	void setExpectedEvent(Event* expectedEventp){ expectedEvent = expectedEventp; }

@@ -72,11 +72,11 @@ void WinSMARTS::runTheTasks()
 		if(debugTask != NO_TASK)
 		{
 			setCurrentTask(debugTask);
-			log(LOG_CONTEXT_SWITCH, "%u", nextTask);
+			log(LOG_CONTEXT_SWITCH, "%u", debugTask);
 			debugTask = NO_TASK;
 		}
 
-		if(tasks[getCurrentTask()]->getCSOff())
+		if(tasks[getCurrentTask()]->getCSOff())                         // in case of a task that disabled CS and went to sleep
 			contextSwitchOff();
 		else
 			contextSwitchAllow = true;
@@ -105,8 +105,6 @@ tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int 
 	tasks.push_back(shared_ptr<Task>(new Task(fn, tasks.size(), name, priority, ::taskEnd, this, stackSize)));
 	states[READY].insert(tasks.size() - 1);
 	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
-
-	currentTask = tasks.size() - 1;
 
 	log(LOG_NEW_TASK, "%u;%s;%u", currentTask, name.c_str(), priority);
 
@@ -161,7 +159,7 @@ void WinSMARTS::systemIdle()
 void WinSMARTS::contextSwitchOn()
 {
 	log(LOG_CONTEXT_SWITCH_ON);
-	tasks[getCurrentTask()]->setCS(false);
+	tasks[getCurrentTask()]->setCSOff(false);
 	contextSwitchAllow = true;
 
 	if(endOfTimeSlice)
@@ -195,7 +193,7 @@ bool WinSMARTS::isAtLeastOneTaskAlive()
 inline void WinSMARTS::contextSwitchOff()
 {
 	contextSwitchAllow = false;
-	tasks[getCurrentTask()]->setCS(true);
+	tasks[getCurrentTask()]->setCSOff(true);
 	log(LOG_CONTEXT_SWITCH_OFF);
 }
 
