@@ -13,7 +13,7 @@
 #include <sstream>
 #include <cstdarg>
 
-//! The type used for task ids
+//! The type used for task IDs
 typedef size_t tid_t;
 const tid_t NO_TASK = (tid_t)-1;
 

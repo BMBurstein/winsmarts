@@ -2,7 +2,7 @@
  * \file WinSMARTS.h
  *
  * \author Baruch Burstein
- * \author Elad Yechiel
+ * \author Elad Yehiel
  *
  * Main header file for WinSMARTS library
  */
@@ -153,21 +153,21 @@ public:
 	 * \brief Gets the name of task \a tid
 	 * \param[in] tid ID of task to get
 	 */
-	std::string getTaskName(tid_t tid)     const { return tasks.at(tid)->getName(); }          // Get task's name by it's tid
+	std::string getTaskName(tid_t tid)     const { return tasks.at(tid)->getName(); }          // Get task's name by its tid
 	/// Gets the name of the current task
 	std::string getTaskName()              const { return getTaskName(getCurrentTask()); }     // Get current task's name
 	/*!
 	 * \brief Gets the status of task \a tid
 	 * \param[in] tid ID of task to get
 	 */
-	taskStatus  getTaskStatus(tid_t tid)   const { return tasks.at(tid)->getStatus(); }        // Get task's status by it's tid
+	taskStatus  getTaskStatus(tid_t tid)   const { return tasks.at(tid)->getStatus(); }        // Get task's status by its tid
 	/// Gets the status of the current task
 	taskStatus  getTaskStatus()            const { return getTaskStatus(getCurrentTask()); }   // Get current task's status
 	/*!
 	 * \brief Gets the priority of task \a tid
 	 * \param[in] tid ID of task to get
 	 */
-	int         getTaskPriority(tid_t tid) const { return tasks.at(tid)->getPriority(); }      // Get task's priority by it's tid
+	int         getTaskPriority(tid_t tid) const { return tasks.at(tid)->getPriority(); }      // Get task's priority by its tid
 	/// Gets the priority of the current task
 	int         getTaskPriority()          const { return getTaskPriority(getCurrentTask()); } // Get current task's priority
 
@@ -184,22 +184,22 @@ public:
 	 * \param[in] tid  ID of task to set
 	 * \param[in] stat the new status
 	 */
-	void setTaskStatus(tid_t tid, taskStatus stat); // Set task's status by it's tid
+	void setTaskStatus(tid_t tid, taskStatus stat); // Set task's status by its tid
 	/*!
 	 * \brief Sets the status of the current task
 	 * \param[in] stat the new status
 	 */
 	void setTaskStatus(taskStatus stat)            { setTaskStatus(getCurrentTask(), stat); }  // Set current task's status
 	/*!
-	 * \brief Resets the priority of task \a tid back to it's original value
+	 * \brief Resets the priority of task \a tid back to its original value
 	 * \param[in] tid ID of task to set
 	 */
 	void restorePriority(tid_t tid)                { tasks.at(tid)->restorePriority(); }       // Restore task's priority by tid
-	/// Resets the priority of the current task back to it's original value
+	/// Resets the priority of the current task back to its original value
 	void restorePriority()                         { restorePriority(getCurrentTask()); }      // Restore current task's priority
 
 
-	Event* getExpectedEvent(unsigned int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by it's index
+	Event* getExpectedEvent(unsigned int tid){ return (tid >= 0 && tid <= getTotalTasks())? tasks.at(tid)->getExpectedEvent() : NULL; } //Get task's expectedEvent by its index
 	Event* getCurrentExpectedEvent() { return tasks.at(getCurrentTask())->getExpectedEvent(); }                                // Get current task's expectedEvent
 	void setCurrentExpectedEvent(Event* expectedEventp) { tasks.at(getCurrentTask())->setExpectedEvent(expectedEventp); }      // Set current task's expectedEvent
 
@@ -214,7 +214,7 @@ public:
 	void debugSetCurrentTask(tid_t tid);
 	void debugSetContextSwitch(bool allow);
 
-	volatile tid_t debugTask; // Task to swtch to
+	volatile tid_t debugTask; // Task to switch to
 	volatile bool  debugCS;   // Set CS to this
 	volatile bool  debugCS_valid;
 };

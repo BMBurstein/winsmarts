@@ -9,7 +9,7 @@ doTimerAsm PROC EXPORT
 	push ebp
 	mov ebp, esp
 	pushfd             ; backup flags register (4 Bytes)
-	pushad             ; bakcup general purpose registers (8*4 Bytes)
+	pushad             ; backup general purpose registers (8*4 Bytes)
 	mov eax, [ebp+08h] ; load interrupt handler pointer
 	push DWORD PTR [ebp+0Ch]     ; push interrupt handler parameter
 	call eax           ; invoke interrupt handler

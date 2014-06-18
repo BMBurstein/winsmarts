@@ -41,7 +41,7 @@ endm
 
 contextSwitch PROC EXPORT
 	pushM
-	mov [rcx], rsp    ; bacup stack pointer (32 bits) of outgoing task onto it's stack (before flags and general purpose registers)
+	mov [rcx], rsp    ; backup stack pointer (32 bits) of outgoing task onto its stack (before flags and general purpose registers)
 	mov rsp, rdx    ; load stack pointer (32 bits) of incoming task
 	popM
 	mov rcx, [rsp+10h] 
@@ -50,7 +50,7 @@ contextSwitch ENDP
 
 newTask PROC EXPORT
 	push rbx
-	mov rbx, rsp              ; bacup stack pointer of 'newTask' caller (=constuctor of Task)
+	mov rbx, rsp              ; backup stack pointer of 'newTask' caller (=constructor of Task)
 	mov rsp, r8               ; load stack pointer of the new Task that is created (received parameter)
 	push QWORD PTR [rbx+30h]  ; ?? retParam
 	push rax                  ; ?? dummy value - DO NOT RETURN FROM RET
@@ -64,7 +64,7 @@ newTask PROC EXPORT
 	push rcx                  ; ?? fn
 	pushM
 	mov rax, rsp    ; store stack pointer of the new Task that was created as return value
-	mov rsp, rbx    ; restore stack pointer of 'newTask' caller (=constuctor of Task)
+	mov rsp, rbx    ; restore stack pointer of 'newTask' caller (=constructor of Task)
 	pop rbx
 	ret
 newTask ENDP

@@ -64,7 +64,7 @@ void WinSMARTS::runTheTasks()
 			break;
 		}
 
-		nextTask = algo(states, getCurrentTask(), this);                // decide which task will run now
+		nextTask = algo(states, getCurrentTask(), this);                // decides which task will run now
 		setCurrentTask(nextTask);
 		log(LOG_CONTEXT_SWITCH, "%u", nextTask);
 
