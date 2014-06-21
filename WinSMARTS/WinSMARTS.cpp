@@ -106,6 +106,8 @@ tid_t WinSMARTS::declareTask(TaskProc fn, std::string const &name, unsigned int 
 	states[READY].insert(tasks.size() - 1);
 	contextSwitchAllow = !tasks[getCurrentTask()]->CSOff;
 
+	currentTask = tasks.size() - 1;
+
 	log(LOG_NEW_TASK, "%u;%s;%u", currentTask, name.c_str(), priority);
 
 	return currentTask;

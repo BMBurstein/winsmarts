@@ -90,8 +90,8 @@ int main()
 	//WinSMARTS SMARTS(RoundRobin, Lg, 55);      // instance of our system
 
 
-	SMARTS.declareTask(a, "a", 3);    //
-	SMARTS.declareTask(b, "b", 7);    // declare few tasks
+	SMARTS.declareTask(a, "1st task", 3);    //
+	SMARTS.declareTask(b, "2nd task", 7);    // declare few tasks
 	SMARTS.declareTask(c, "3rd task", 7);    //
 
 	SMARTS.runTheTasks();        // start running the tasks
